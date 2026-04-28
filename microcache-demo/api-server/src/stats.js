@@ -19,6 +19,9 @@ const state = {
 
   // Timestamp de démarrage
   startedAt: Date.now(),
+  
+  // Timestamp de la dernière requête (pour decay)
+  lastRequestTime: Date.now(),
 };
 
 /**
@@ -39,6 +42,7 @@ function recordCacheHit(latencyMs) {
   state.totalRequests++;
   state.cacheHits++;
   state.cacheServerUp = true;
+  state.lastRequestTime = Date.now();
 
   // Ajouter la latence (max 100 éléments, FIFO)
   state.latencyCache.push(latencyMs);
@@ -54,6 +58,7 @@ function recordCacheMiss(dbLatencyMs) {
   state.totalRequests++;
   state.cacheMisses++;
   state.cacheServerUp = true;
+  state.lastRequestTime = Date.now();
 
   // Ajouter la latence (max 100 éléments, FIFO)
   state.latencyCache.push(dbLatencyMs);
@@ -68,6 +73,7 @@ function recordCacheMiss(dbLatencyMs) {
 function recordCacheError() {
   state.totalRequests++;
   state.cacheErrors++;
+  state.lastRequestTime = Date.now();
   state.cacheServerUp = false;
 }
 
@@ -75,6 +81,8 @@ function recordCacheError() {
  * Enregistre une requête nocache (DB directe)
  */
 function recordNocacheRequest(latencyMs) {
+  state.lastRequestTime = Date.now();
+  
   // Ajouter la latence (max 100 éléments, FIFO)
   state.latencyNocache.push(latencyMs);
   if (state.latencyNocache.length > 100) {
@@ -84,8 +92,23 @@ function recordNocacheRequest(latencyMs) {
 
 /**
  * Retourne un snapshot complet des métriques (objet pur, pas de références)
+ * Applique un mécanisme de decay pour faire descendre les latences quand il n'y a pas de trafic
  */
 function getSnapshot() {
+  // ─── Decay mechanism : après 2s d'inactivité, pousser des 0 pour diluer les anciennes latences
+  const timeSinceLastRequest = Date.now() - state.lastRequestTime;
+  if (timeSinceLastRequest > 2000 && (state.latencyCache.length > 0 || state.latencyNocache.length > 0)) {
+    // Pousser progressivement des 0 pour faire baisser la moyenne
+    if (state.latencyCache.length > 0) {
+      state.latencyCache.push(0);
+      if (state.latencyCache.length > 100) state.latencyCache.shift();
+    }
+    if (state.latencyNocache.length > 0) {
+      state.latencyNocache.push(0);
+      if (state.latencyNocache.length > 100) state.latencyNocache.shift();
+    }
+  }
+
   const avgLatencyCache = state.latencyCache.length > 0
     ? Math.round(state.latencyCache.reduce((a, b) => a + b, 0) / state.latencyCache.length)
     : 0;
