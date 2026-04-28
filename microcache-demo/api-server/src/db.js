@@ -87,12 +87,13 @@ function initDatabase() {
 }
 
 /**
- * Simule une latence réaliste de BD sous charge
- * Délai aléatoire entre 40ms et 120ms
+ * Simule une latence réaliste de BD sous charge (avec réseau)
+ * Délai aléatoire entre 80ms et 250ms (vs cache ~1-15ms)
+ * Cela représente une vraie BD avec I/O disque + réseau
  */
 function simulateDbLatency() {
-  const minLatency = 40;
-  const maxLatency = 120;
+  const minLatency = 80;
+  const maxLatency = 250;
   const delay = minLatency + Math.random() * (maxLatency - minLatency);
 
   return new Promise(resolve => setTimeout(resolve, delay));
