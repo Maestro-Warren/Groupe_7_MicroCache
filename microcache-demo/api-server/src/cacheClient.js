@@ -163,8 +163,16 @@ class MicroCacheClient {
 
   /**
    * Enfile une commande et la traite
+   * Si non connecté, tente une reconnexion silencieuse avant d'échouer.
    */
   async enqueueCommand(command) {
+    if (!this.isConnected) {
+      try {
+        await this.connect();
+      } catch (_) {
+        // reconnect failed — fall through to throw below
+      }
+    }
     if (!this.isConnected) {
       this.stats.errors++;
       throw new Error('Not connected to MicroCache');
