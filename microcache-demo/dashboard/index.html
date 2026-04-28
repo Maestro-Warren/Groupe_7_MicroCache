@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MicroCache Demo — Billetterie Concert</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    .status-indicator.connected {
+      background-color: #27ae60;
+    }
+
+    .status-indicator.disconnected {
+      background-color: #f39c12;
+      animation: pulse-warn 1s infinite;
+    }
+
+    .status-indicator.error {
+      background-color: #e74c3c;
+      animation: pulse-error 0.6s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes pulse-warn {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes pulse-error {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .concert-selector {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .concert-selector label {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .concert-selector select {
+      padding: 8px 12px;
+      border: 2px solid #3498db;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* METRICS CARDS */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .metric-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .metric-card h3 {
+      color: #7f8c8d;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .metric-card .value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .metric-card .unit {
+      color: #95a5a6;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    /* COMPARISON PANELS */
+    .comparison-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .panel {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 6px solid;
+    }
+
+    .panel.without-cache {
+      border-left-color: #e74c3c;
+    }
+
+    .panel.with-cache {
+      border-left-color: #27ae60;
+    }
+
+    .panel.overloaded {
+      animation: blink-border 0.8s infinite;
+      background-color: #fef5f5;
+    }
+
+    @keyframes blink-border {
+      0%, 100% { border-left-color: #e74c3c; box-shadow: 0 0 15px rgba(231,76,60,0.3); }
+      50% { border-left-color: #c0392b; box-shadow: 0 0 25px rgba(231,76,60,0.5); }
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-badge {
+      display: inline-block;
+      background: #e74c3c;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .panel-metric {
+      margin-bottom: 15px;
+    }
+
+    .panel-metric label {
+      display: block;
+      color: #7f8c8d;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .panel-metric .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .panel.without-cache .value {
+      color: #e74c3c;
+    }
+
+    .panel.with-cache .value {
+      color: #27ae60;
+    }
+
+    .latency-bar {
+      width: 100%;
+      height: 8px;
+      background-color: #ecf0f1;
+      border-radius: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .latency-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #3498db, #2980b9);
+      transition: width 0.3s ease;
+    }
+
+    .panel.without-cache .latency-bar-fill {
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+    }
+
+    .panel.with-cache .latency-bar-fill {
+      background: linear-gradient(90deg, #27ae60, #229954);
+    }
+
+    /* CHART */
+    .chart-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .chart-section h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    #latencyChart {
+      display: block;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 220px;
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    /* TRAFFIC CONTROLS */
+    .traffic-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .traffic-section h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .traffic-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .traffic-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .traffic-btn.idle {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .traffic-btn.normal {
+      background: #3498db;
+      color: white;
+    }
+
+    .traffic-btn.rush {
+      background: #f39c12;
+      color: white;
+    }
+
+    .traffic-btn.panic {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .traffic-btn.active {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .traffic-btn:hover:not(.active) {
+      opacity: 0.8;
+    }
+
+    /* LOG */
+    .log-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .log-section h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .log-entries {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .log-entry {
+      padding: 6px 0;
+      color: #2c3e50;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-time {
+      color: #95a5a6;
+      margin-right: 10px;
+    }
+
+    .log-badge {
+      display: inline-block;
+      width: 50px;
+      text-align: center;
+      font-weight: 700;
+      margin-right: 10px;
+      border-radius: 3px;
+      padding: 2px 6px;
+    }
+
+    .log-badge.hit {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .log-badge.miss {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .log-badge.db {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .log-latency {
+      float: right;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <h1>🎵 MicroCache Demo — Billetterie Concert</h1>
+      <div class="header-right">
+        <div class="connection-status">
+          <div class="status-indicator connected" id="statusIndicator"></div>
+          <span id="statusText">● LIVE</span>
+        </div>
+        <div class="concert-selector">
+          <label for="concertSelect">Concert :</label>
+          <select id="concertSelect">
+            <option value="1">🎤 Burna Boy — Bercy</option>
+            <option value="2">🎸 Davido — Accor Arena</option>
+            <option value="3">🎹 Tiwa Savage — Zénith</option>
+            <option value="4">🌟 WizKid — Stade de France</option>
+            <option value="5">💫 Aya Nakamura — Accor Arena</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Requêtes totales</h3>
+        <div class="value" id="total-requests">0</div>
+        <div class="unit">depuis démarrage</div>
+      </div>
+      <div class="metric-card">
+        <h3>Taux de hit</h3>
+        <div class="value" id="hit-rate">0<span style="font-size: 24px;">%</span></div>
+        <div class="unit">cache hit rate</div>
+      </div>
+      <div class="metric-card">
+        <h3>Gain de vitesse</h3>
+        <div class="value" id="speedup-factor">—</div>
+        <div class="unit">times faster</div>
+      </div>
+      <div class="metric-card">
+        <h3>Places disponibles</h3>
+        <div class="value" id="tickets-left">—</div>
+        <div class="unit">ce concert</div>
+      </div>
+    </div>
+
+    <!-- COMPARISON -->
+    <div class="comparison-section">
+      <!-- SANS CACHE -->
+      <div class="panel without-cache" id="panelNocache">
+        <h2>🐢 SANS Cache</h2>
+        <div class="panel-metric">
+          <label>Latence moyenne</label>
+          <div class="value" id="lat-nocache">—</div>
+          <div class="latency-bar">
+            <div class="latency-bar-fill" id="bar-nocache" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="panel-metric">
+          <label>P95 Latence</label>
+          <div class="value" id="p95-nocache">—</div>
+        </div>
+      </div>
+
+      <!-- AVEC CACHE -->
+      <div class="panel with-cache" id="panelCache">
+        <h2>⚡ AVEC MicroCache</h2>
+        <div class="panel-metric">
+          <label>Latence moyenne</label>
+          <div class="value" id="lat-cache">—</div>
+          <div class="latency-bar">
+            <div class="latency-bar-fill" id="bar-cache" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="panel-metric">
+          <label>P95 Latence</label>
+          <div class="value" id="p95-cache">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-section">
+      <h2>📊 Latence en temps réel (dernières 30 secondes)</h2>
+      <div class="chart-container">
+        <canvas id="latencyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- TRAFFIC CONTROLS -->
+    <div class="traffic-section">
+      <h2>🚦 Générer du trafic</h2>
+      <div class="traffic-buttons">
+        <button class="traffic-btn idle active" onclick="setTrafficMode('idle')">⏹ Stop</button>
+        <button class="traffic-btn normal" onclick="setTrafficMode('normal')">▶ Normal (5 req/s)</button>
+        <button class="traffic-btn rush" onclick="setTrafficMode('rush')">⏩ Afflux (30 req/s)</button>
+        <button class="traffic-btn panic" onclick="setTrafficMode('panic')">🚨 Panique (150 req/s)</button>
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="log-section">
+      <h2>📝 Journal des requêtes</h2>
+      <div class="log-entries" id="logEntries">
+        <div class="log-entry" style="color: #95a5a6;">En attente de requêtes...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== CONFIGURATION =====
+    const WS_URL = `ws://${window.location.host}/ws`;
+    const MODES = {
+      idle:   { rps: 0,   label: 'Stop' },
+      normal: { rps: 5,   label: 'Normal' },
+      rush:   { rps: 30,  label: 'Afflux' },
+      panic:  { rps: 150, label: 'Panique' },
+    };
+
+    const MAX_CHART_POINTS = 60;
+    const MAX_LOG_ENTRIES = 50;
+
+    // ===== STATE =====
+    let ws = null;
+    let reconnectTimer = null;
+    let trafficInterval = null;
+    let currentMode = 'idle';
+    let concertId = 1;
+    let chart = null;
+    let logEntries = [];
+
+    // ===== WEBSOCKET =====
+    function connect() {
+      try {
+        ws = new WebSocket(WS_URL);
+
+        ws.onopen = () => {
+          setConnectionStatus('connected');
+          clearTimeout(reconnectTimer);
+          console.log('WebSocket connecté');
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'metrics' || msg.type === 'snapshot') {
+              updateDashboard(msg.payload);
+            }
+          } catch (err) {
+            console.error('Erreur parsing message:', err);
+          }
+        };
+
+        ws.onclose = () => {
+          setConnectionStatus('disconnected');
+          reconnectTimer = setTimeout(connect, 3000);
+          console.log('WebSocket déconnecté');
+        };
+
+        ws.onerror = (err) => {
+          setConnectionStatus('error');
+          console.error('Erreur WebSocket:', err);
+        };
+      } catch (err) {
+        console.error('Erreur création WebSocket:', err);
+        setConnectionStatus('error');
+      }
+    }
+
+    function setConnectionStatus(status) {
+      const indicator = document.getElementById('statusIndicator');
+      const statusText = document.getElementById('statusText');
+
+      indicator.className = 'status-indicator ' + status;
+
+      if (status === 'connected') {
+        statusText.textContent = '● LIVE';
+      } else if (status === 'disconnected') {
+        statusText.textContent = '● Reconnexion…';
+      } else {
+        statusText.textContent = '● Erreur';
+      }
+    }
+
+    // ===== DASHBOARD UPDATE =====
+    function updateDashboard(payload) {
+      if (!payload) return;
+
+      // Métriques simples
+      document.getElementById('total-requests').textContent = 
+        (payload.totalRequests || 0).toLocaleString('fr');
+      document.getElementById('hit-rate').innerHTML = 
+        `${(payload.hitRate || 0).toFixed(1)}<span style="font-size: 24px;">%</span>`;
+      
+      const speedup = payload.speedupFactor || 0;
+      document.getElementById('speedup-factor').textContent = 
+        speedup > 0 ? `×${speedup}` : '—';
+
+      // Panneaux de latence
+      const latNocache = payload.avgLatencyNocache || 0;
+      const latCache = payload.avgLatencyCache || 0;
+      const p95Nocache = payload.p95LatencyNocache || 0;
+      const p95Cache = payload.p95LatencyCache || 0;
+
+      document.getElementById('lat-nocache').textContent = latNocache + ' ms';
+      document.getElementById('lat-cache').textContent = latCache + ' ms';
+      document.getElementById('p95-nocache').textContent = p95Nocache + ' ms';
+      document.getElementById('p95-cache').textContent = p95Cache + ' ms';
+
+      // Barres de latence (max 500ms pour l'échelle)
+      const maxLatency = 500;
+      document.getElementById('bar-nocache').style.width = 
+        Math.min(100, (latNocache / maxLatency) * 100) + '%';
+      document.getElementById('bar-cache').style.width = 
+        Math.min(100, (latCache / maxLatency) * 100) + '%';
+
+      // Alerte surcharge
+      const panelNocache = document.getElementById('panelNocache');
+      if (latNocache > 200) {
+        panelNocache.classList.add('overloaded');
+        if (!panelNocache.querySelector('.panel-badge')) {
+          const badge = document.createElement('span');
+          badge.className = 'panel-badge';
+          badge.textContent = 'SURCHARGE';
+          panelNocache.querySelector('h2').appendChild(badge);
+        }
+      } else {
+        panelNocache.classList.remove('overloaded');
+        const badge = panelNocache.querySelector('.panel-badge');
+        if (badge) badge.remove();
+      }
+
+      // Mettre à jour le graphique
+      pushToChart(latNocache, latCache);
+
+      // Récupérer les places disponibles
+      fetchAvailableTickets();
+    }
+
+    // ===== CHART.JS =====
+    function initChart() {
+      const ctx = document.getElementById('latencyChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array(MAX_CHART_POINTS).fill(''),
+          datasets: [
+            {
+              label: 'Sans cache',
+              data: Array(MAX_CHART_POINTS).fill(null),
+              borderColor: '#e74c3c',
+              backgroundColor: 'transparent',
+              tension: 0.4,
+              pointRadius: 0,
+              borderWidth: 3,
+            },
+            {
+              label: 'MicroCache',
+              data: Array(MAX_CHART_POINTS).fill(null),
+              borderColor: '#27ae60',
+              backgroundColor: 'transparent',
+              tension: 0.4,
+              pointRadius: 0,
+              borderWidth: 3,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 300,
+              ticks: { font: { size: 11 } },
+              grid: { color: 'rgba(0,0,0,0.06)' }
+            },
+            x: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    function pushToChart(latNocache, latCache) {
+      if (!chart) return;
+      chart.data.datasets[0].data.push(latNocache);
+      chart.data.datasets[0].data.shift();
+      chart.data.datasets[1].data.push(latCache);
+      chart.data.datasets[1].data.shift();
+      chart.update('none');
+    }
+
+    // ===== TRAFFIC GENERATION =====
+    function setTrafficMode(modeName) {
+      clearInterval(trafficInterval);
+      currentMode = modeName;
+      
+      // Mettre à jour les boutons
+      document.querySelectorAll('.traffic-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      const { rps } = MODES[modeName];
+      if (rps === 0) return;
+
+      const intervalMs = Math.round(1000 / rps);
+      trafficInterval = setInterval(() => {
+        // Envoyer deux requêtes en parallèle
+        fetch(`/api/tickets?concertId=${concertId}`)
+          .then(r => r.json())
+          .then(data => logRequest(data, 'cache'))
+          .catch(() => {});
+
+        fetch(`/api/tickets/nocache?concertId=${concertId}`)
+          .then(r => r.json())
+          .then(data => logRequest(data, 'nocache'))
+          .catch(() => {});
+      }, intervalMs);
+    }
+
+    // ===== LOG =====
+    function logRequest(data, type) {
+      if (!data.success) return;
+
+      const now = new Date();
+      const time = now.toLocaleTimeString('fr', { hour12: false });
+      const latency = data.meta.latencyMs;
+      const source = data.data.source;
+
+      let badgeClass = 'db';
+      let badgeText = 'DB';
+      if (type === 'cache') {
+        if (source === 'cache') {
+          badgeClass = 'hit';
+          badgeText = 'HIT';
+        } else {
+          badgeClass = 'miss';
+          badgeText = 'MISS';
+        }
+      }
+
+      const entry = `<div class="log-entry">
+        <span class="log-time">${time}</span>
+        <span class="log-badge ${badgeClass}">${badgeText}</span>
+        concert:${data.data.concertId}:seats
+        <span class="log-latency">${latency}ms</span>
+      </div>`;
+
+      logEntries.unshift(entry);
+      if (logEntries.length > MAX_LOG_ENTRIES) {
+        logEntries.pop();
+      }
+
+      document.getElementById('logEntries').innerHTML = logEntries.join('');
+    }
+
+    // ===== FETCH TICKETS =====
+    function fetchAvailableTickets() {
+      fetch('/api/concerts')
+        .then(r => r.json())
+        .then(data => {
+          if (data.success && data.data.length > 0) {
+            const concerts = data.data;
+            const selectedId = parseInt(concertId);
+            const concert = concerts.find(c => c.id === selectedId);
+            if (concert) {
+              document.getElementById('tickets-left').textContent = concert.available_seats.toLocaleString('fr');
+            }
+          }
+        })
+        .catch(err => console.error('Erreur fetch concerts:', err));
+    }
+
+    // ===== CONCERT SELECTOR =====
+    document.getElementById('concertSelect').addEventListener('change', (e) => {
+      concertId = e.target.value;
+      fetchAvailableTickets();
+    });
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', () => {
+      initChart();
+      connect();
+      fetchAvailableTickets();
+    });
+  </script>
+</body>
+</html>
