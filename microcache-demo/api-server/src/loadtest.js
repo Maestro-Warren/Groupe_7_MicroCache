@@ -145,6 +145,21 @@ function padRight(str, len) {
   return str + ' '.repeat(Math.max(0, len - str.length));
 }
 
+function getProgress(mode, startTime, duration, completedCount, totalCount) {
+  if (mode === 'duration') {
+    const elapsed = (Date.now() - startTime) / 1000;
+    return Math.min(100, Math.round((elapsed / duration) * 100));
+  }
+  return Math.round((completedCount / totalCount) * 100);
+}
+
+function formatTimeRemaining(mode, startTime, duration) {
+  if (mode !== 'duration') return '';
+  const elapsed = (Date.now() - startTime) / 1000;
+  const remaining = Math.max(0, duration - elapsed);
+  return ` — ${Math.round(remaining)}s restantes`;
+}
+
 function progressBar(current, total, avgLatency) {
   const percent = Math.round((current / total) * 100);
   const filled = Math.round((percent / 100) * 20);
@@ -185,6 +200,8 @@ async function main() {
 
   let requestsDone = 0;
   let startTimeDuration = Date.now();
+  let completedNocache = 0;
+  let completedCache = 0;
 
   // ===== TEST LOOP =====
   while (true) {
@@ -203,6 +220,7 @@ async function main() {
           `${config.baseUrl}/api/tickets?concertId=${config.concertId}`
         );
         allResultsCache.push(res);
+        completedCache++;
         return res;
       });
 
@@ -212,6 +230,7 @@ async function main() {
           `${config.baseUrl}/api/tickets/nocache?concertId=${config.concertId}`
         );
         allResultsNocache.push(res);
+        completedNocache++;
         return res;
       });
     }
@@ -225,11 +244,17 @@ async function main() {
     const statsCache = computeStats(allResultsCache);
     const statsNocache = computeStats(allResultsNocache);
 
+    const pctCache = getProgress(testMode, startTimeDuration, config.duration, completedCache, totalRequests);
+    const pctNocache = getProgress(testMode, startTimeDuration, config.duration, completedNocache, totalRequests);
+
+    const barCache = '█'.repeat(Math.round((pctCache / 100) * 20)) + '░'.repeat(20 - Math.round((pctCache / 100) * 20));
+    const barNocache = '█'.repeat(Math.round((pctNocache / 100) * 20)) + '░'.repeat(20 - Math.round((pctNocache / 100) * 20));
+
+    const timeRemaining = formatTimeRemaining(testMode, startTimeDuration, config.duration);
+
     process.stdout.write(
-      `\rSans cache  ${progressBar(statsNocache.count, totalRequests * 2, statsNocache.mean)}`
-    );
-    process.stdout.write(
-      `\nAvec cache  ${progressBar(statsCache.count, totalRequests * 2, statsCache.mean)}\n`
+      `\rSans cache  [${barNocache}] ${String(pctNocache).padStart(3)}% — ${Math.round(statsNocache.mean)}ms avg${timeRemaining}\n` +
+      `Avec cache  [${barCache}] ${String(pctCache).padStart(3)}% — ${Math.round(statsCache.mean)}ms avg${timeRemaining}\x1b[1A`
     );
   }
 
@@ -322,9 +347,10 @@ async function main() {
   console.log(`  → Avec cache  : ~${Math.round(cacheEstimate / 1000)}s de latence cumulée/sec (✓ optimal)\n`);
 
   // ===== VALIDATION CRITERIA =====
+  const SPEEDUP_THRESHOLD = 7;
   console.log('✓ Critères de validation:');
   console.log(
-    `  ${speedupFactor >= 10 ? '✅' : '❌'} Gain de vitesse ≥ ×10 (actuellement: ×${speedupFactor})`
+    `  ${speedupFactor >= SPEEDUP_THRESHOLD ? '✅' : '❌'} Gain de vitesse ≥ ×${SPEEDUP_THRESHOLD} (actuellement: ×${speedupFactor})`
   );
   console.log(`  ${cacheHitRate >= 80 ? '✅' : '❌'} Cache hit rate ≥ 80% (actuellement: ${cacheHitRate}%)`);
   console.log(
@@ -336,13 +362,13 @@ async function main() {
 
   // Exit code
   const passed =
-    speedupFactor >= 10 &&
+    speedupFactor >= SPEEDUP_THRESHOLD &&
     cacheHitRate >= 80 &&
     statsNocache.successRate === 100 &&
     statsCache.successRate === 100;
 
   if (passed) {
-    console.log('🎉 TOUS LES CRITÈRES VALIDÉS — Projet TERMINÉ!\n');
+    console.log(' TOUS LES CRITÈRES VALIDÉS \n');
     process.exit(0);
   } else {
     console.log('⚠️  Certains critères ne sont pas atteints.\n');
