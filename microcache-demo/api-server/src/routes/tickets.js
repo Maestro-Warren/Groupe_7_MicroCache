@@ -2,6 +2,10 @@ const express = require('express');
 const { getConcertById, getAvailableSeats, getAllConcerts, simulateDbLatency } = require('../db');
 const stats = require('../stats');
 
+// Configuration du TTL du cache via variable d'environnement
+const CACHE_TTL = parseInt(process.env.CACHE_TTL || '30', 10);
+console.log(`[CONFIG] CACHE_TTL = ${CACHE_TTL}s`);
+
 /**
  * Factory function pour créer le routeur des tickets
  * Accepte db (connexion SQLite) et cache (client MicroCache)
@@ -67,7 +71,7 @@ module.exports = function createTicketsRouter(db, cache) {
 
       // Stocker dans le cache pour la prochaine fois
       try {
-        await cache.set(cacheKey, String(seats), 30);
+        await cache.set(cacheKey, String(seats), CACHE_TTL);
       } catch (err) {
         console.warn(`Cache SET error on ${cacheKey}:`, err.message);
       }
