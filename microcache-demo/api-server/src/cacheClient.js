@@ -2,21 +2,24 @@ const net = require('net');
 
 /**
  * Client TCP pour MicroCache (serveur Rust sur :6379)
- * Protocole textuel simple : commandes et réponses terminées par \n
+ * Protocole : RESP (Redis Serialization Protocol)
  * 
- * Réponses MicroCache :
- *   SET key value    → "OK\n"
- *   GET key          → "valeur\n" ou "NIL\n"
- *   EXISTS key       → "1\n" ou "0\n"
- *   DEL key          → "OK\n"
- *   TTL key          → "secondes\n" ou "-1\n"
+ * Format des réponses MicroCache RESP:
+ *   SET key value    → "+OK\r\n" (simple string)
+ *   GET key (hit)    → "$5\r\nhello\r\n" (bulk string)
+ *   GET key (miss)   → "$-1\r\n" (nil bulk string)
+ *   EXISTS key       → ":1\r\n" ou ":0\r\n" (integer)
+ *   DEL key          → ":1\r\n" (integer)
+ *   TTL key          → ":N\r\n" (integer)
+ *   PING             → "+PONG\r\n" (simple string)
  * 
- * Géré de manière robuste :
+ * Le parser RESP gère:
+ * - Accumulation des données dans un buffer
+ * - Parsing des bulk strings multi-lignes
+ * - Distinction nil ($-1) vs hit ($N\r\nDATA\r\n)
  * - Queue de commandes (une seule à la fois)
- * - Timeouts sur chaque commande
+ * - Timeouts et gestion d'erreurs
  * - Stats des hits/misses/errors
- * - Idempotence du connect()
- * - Fermeture propre de la socket
  */
 class MicroCacheClient {
   constructor(host = '127.0.0.1', port = 6379, options = {}) {
@@ -102,30 +105,19 @@ class MicroCacheClient {
 
   /**
    * Configure les event listeners sur la socket
-   * Parser simple : découpage sur \n
+   * Parser RESP (Redis Serialization Protocol) :
+   *   - Simple string: +OK\r\n
+   *   - Error: -ERR\r\n
+   *   - Integer: :1\r\n
+   *   - Bulk string: $5\r\nhello\r\n
+   *   - Nil bulk string: $-1\r\n
    */
   setupSocketListeners() {
     this.socket.setEncoding('utf8');
 
     this.socket.on('data', (chunk) => {
       this.responseBuffer += chunk;
-
-      // Découper sur \n (pas \r\n)
-      const lines = this.responseBuffer.split('\n');
-      // La dernière entrée est soit vide soit un fragment incomplet
-      this.responseBuffer = lines.pop() || '';
-
-      for (const rawLine of lines) {
-        const line = rawLine.trim(); // retire \r résiduel et espaces
-        if (line === '') continue;
-
-        if (this.commandQueue.length > 0) {
-          const pending = this.commandQueue.shift();
-          this.isProcessingCommand = false;
-          pending.resolve(line); // résout avec la ligne brute trimée
-          this.processNextCommand();
-        }
-      }
+      this.processResponses();
     });
 
     this.socket.on('close', () => {
@@ -137,6 +129,79 @@ class MicroCacheClient {
       this.socket = null;
       this.rejectAllQueuedCommands(`Socket error: ${err.message}`);
     });
+  }
+
+  /**
+   * Parse et traite les réponses RESP du buffer
+   */
+  processResponses() {
+    while (true) {
+      const crlfIdx = this.responseBuffer.indexOf('\r\n');
+      if (crlfIdx === -1) break; // Pas de réponse complète
+
+      const line = this.responseBuffer.substring(0, crlfIdx);
+      const prefix = line[0];
+
+      // Bulk string: $N\r\nDATA\r\n
+      if (prefix === '$') {
+        const len = parseInt(line.substring(1), 10);
+
+        // Nil bulk string: $-1\r\n
+        if (len === -1) {
+          this.responseBuffer = this.responseBuffer.substring(crlfIdx + 2);
+          this.resolveNext(null); // null = miss
+          continue;
+        }
+
+        // Vérifier que les données complètes sont présentes
+        const dataStart = crlfIdx + 2;
+        const dataEnd = dataStart + len;
+        const termEnd = dataEnd + 2; // \r\n final
+        if (this.responseBuffer.length < termEnd) break; // Attendre plus de données
+
+        const value = this.responseBuffer.substring(dataStart, dataEnd);
+        this.responseBuffer = this.responseBuffer.substring(termEnd);
+        this.resolveNext(value); // Valeur réelle
+        continue;
+      }
+
+      // Simple string: +OK\r\n
+      if (prefix === '+') {
+        this.responseBuffer = this.responseBuffer.substring(crlfIdx + 2);
+        this.resolveNext(line.substring(1)); // "OK"
+        continue;
+      }
+
+      // Integer: :1\r\n
+      if (prefix === ':') {
+        this.responseBuffer = this.responseBuffer.substring(crlfIdx + 2);
+        this.resolveNext(line.substring(1)); // "1"
+        continue;
+      }
+
+      // Error: -ERR\r\n
+      if (prefix === '-') {
+        this.responseBuffer = this.responseBuffer.substring(crlfIdx + 2);
+        this.resolveNext(line); // "-ERR ..."
+        continue;
+      }
+
+      // Type inconnu, ignorer
+      this.responseBuffer = this.responseBuffer.substring(crlfIdx + 2);
+      this.resolveNext(null);
+    }
+  }
+
+  /**
+   * Résout la prochaine commande en attente
+   */
+  resolveNext(value) {
+    if (this.commandQueue.length > 0) {
+      const pending = this.commandQueue.shift();
+      this.isProcessingCommand = false;
+      pending.resolve(value); // string ou null
+      this.processNextCommand();
+    }
   }
 
   /**
@@ -220,7 +285,7 @@ class MicroCacheClient {
   }
 
   /**
-   * Envoie PING → attend PONG
+   * PING → attend PONG (simple string: +PONG\r\n)
    */
   async ping() {
     try {
@@ -234,7 +299,9 @@ class MicroCacheClient {
 
   /**
    * GET key → retourne la valeur ou null
-   * Réponse : "valeur\n" ou "NIL\n"
+   * Réponse RESP: 
+   *   - Clé présente: $5\r\nhello\r\n → resolve('hello')
+   *   - Clé absente:  $-1\r\n → resolve(null)
    */
   async get(key) {
     try {
@@ -243,21 +310,23 @@ class MicroCacheClient {
 
       console.log('[CACHE DEBUG] GET response raw:', JSON.stringify(response));
 
-      if (response === 'NIL' || response === '') {
+      // response === null → nil bulk string → MISS
+      if (response === null) {
         this.stats.misses++;
         return null;
       }
 
+      // response === string → HIT
       this.stats.hits++;
-      return response; // string brute ex: "2153"
+      return response; // Valeur réelle ex: "2153"
     } catch (err) {
       throw err;
     }
   }
 
   /**
-   * SET key value [EX ttlSeconds]
-   * Réponse : "OK\n"
+   * SET key value [EX ttlSeconds] → OK
+   * Réponse RESP: +OK\r\n → resolve('OK')
    */
   async set(key, value, ttlSeconds = null) {
     try {
@@ -279,22 +348,22 @@ class MicroCacheClient {
   }
 
   /**
-   * DEL key
-   * Réponse : "OK\n"
+   * DEL key → nombre de clés supprimées
+   * Réponse RESP: :1\r\n → resolve('1')
    */
   async del(key) {
     try {
       this.stats.totalCommands++;
       const response = await this.enqueueCommand(`DEL ${key}`);
-      return response === 'OK';
+      return response === '1';
     } catch (err) {
       throw err;
     }
   }
 
   /**
-   * EXISTS key
-   * Réponse : "1\n" ou "0\n"
+   * EXISTS key → 1 si existe, 0 sinon
+   * Réponse RESP: :1\r\n ou :0\r\n
    */
   async exists(key) {
     try {

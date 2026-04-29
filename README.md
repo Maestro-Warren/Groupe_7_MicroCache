@@ -183,6 +183,4 @@ node src/loadtest.js --requests 200 --concurrency 20
 
 ---
 
-## 📄 Licence
-
-Projet étudiant — Groupe 7 MicroCache
+Groupe 7 MicroCache
