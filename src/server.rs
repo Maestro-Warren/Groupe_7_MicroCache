@@ -1,3 +1,15 @@
+//! Serveur TCP asynchrone de MicroCache.
+//!
+//! # Flux d'exécution
+//! 1. [`run_server`] charge la config et le snapshot, démarre le reaper et la boucle TCP.
+//! 2. [`accept_loop`] accepte les connexions et délègue chacune à une tâche Tokio.
+//! 3. [`handle_client`] lit les lignes de commande, les parse et renvoie les réponses.
+//! 4. [`execute_command`] applique la commande sur le [`SharedStore`] et produit la réponse texte.
+//!
+//! # Signaux Unix (seulement sur les systèmes Unix)
+//! - `SIGUSR1` : déclenche une sauvegarde immédiate du snapshot.
+//! - `SIGHUP`  : recharge la configuration depuis le fichier TOML sans redémarrage.
+
 use crate::parser::{parse_line, Command, ParsedLine};
 use crate::persistence::{load_config, load_snapshot, save_snapshot, Config};
 use crate::reaper::{start_reaper, ReaperHandle};
@@ -9,9 +21,15 @@ use std::time::Duration;
 use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
 use tokio::net::{TcpListener, TcpStream};
 
+/// Options de démarrage du serveur.
+///
+/// Créées via [`ServerOptions::default`] pour l'usage normal,
+/// ou construites manuellement pour les tests.
 #[derive(Debug, Clone)]
 pub struct ServerOptions {
+    /// Chemin vers le fichier de configuration TOML (`microcache.toml` par défaut).
     pub config_path: PathBuf,
+    /// Intervalle en millisecondes entre deux passages du reaper.
     pub reaper_interval_ms: u64,
 }
 
@@ -24,6 +42,13 @@ impl Default for ServerOptions {
     }
 }
 
+/// Démarre le serveur MicroCache complet.
+///
+/// 1. Charge la configuration depuis `options.config_path` (crée les valeurs par défaut si absent).
+/// 2. Restaure le dernier snapshot si le fichier existe.
+/// 3. Lance le reaper périodique et la boucle de snapshot.
+/// 4. Installe les gestionnaires de signaux Unix (`SIGUSR1`, `SIGHUP`).
+/// 5. Ouvre l'écoute TCP sur l'adresse définie dans la config et boucle sur les connexions.
 pub async fn run_server(options: ServerOptions) -> io::Result<()> {
     let initial_cfg = load_config(&options.config_path).unwrap_or_default();
     let config = Arc::new(RwLock::new(initial_cfg.clone()));
@@ -39,6 +64,10 @@ pub async fn run_server(options: ServerOptions) -> io::Result<()> {
     accept_loop(listener, store, reaper_handle).await
 }
 
+/// Boucle principale d'acceptation des connexions TCP.
+///
+/// Pour chaque connexion acceptée, une nouvelle tâche Tokio est détachée
+/// afin de traiter les commandes en parallèle sans bloquer les autres clients.
 async fn accept_loop(
     listener: TcpListener,
     store: SharedStore,
@@ -57,6 +86,13 @@ async fn accept_loop(
     }
 }
 
+/// Gère une connexion TCP cliente.
+///
+/// Lit les lignes en continu jusqu'à la fermeture de la connexion (EOF).
+/// Chaque ligne est analysée par [`parse_line`] :
+/// - En cas d'erreur de parsing, renvoie `-ERR <message>`.
+/// - Si la commande nécessite un payload binaire (`BulkSet`), lit exactement `bulk_len` octets.
+/// - Sinon, exécute la commande immédiatement via [`execute_command`].
 async fn handle_client(stream: TcpStream, store: SharedStore) -> io::Result<()> {
     let (read_half, mut write_half) = stream.into_split();
     let mut reader = BufReader::new(read_half);
@@ -105,6 +141,10 @@ async fn handle_client(stream: TcpStream, store: SharedStore) -> io::Result<()> 
     Ok(())
 }
 
+/// Exécute une [`Command`] sur le store et retourne la réponse texte à envoyer au client.
+///
+/// Toutes les réponses sont terminées par `\n`.
+/// En cas d'empoisonnement du verrou interne, retourne `ERR internal lock error`.
 fn execute_command(command: Command, store: &SharedStore) -> String {
     match command {
         Command::Ping => "PONG\n".to_string(),
@@ -165,6 +205,10 @@ fn execute_command(command: Command, store: &SharedStore) -> String {
     }
 }
 
+/// Lance en arrière-plan la tâche Tokio de sauvegarde périodique du snapshot.
+///
+/// Lit l'intervalle et le chemin de sauvegarde depuis la config à chaque itération
+/// afin de prendre en compte un rechargement de config via `SIGHUP`.
 fn spawn_snapshot_loop(store: SharedStore, config: Arc<RwLock<Config>>) {
     tokio::spawn(async move {
         loop {
@@ -181,6 +225,10 @@ fn spawn_snapshot_loop(store: SharedStore, config: Arc<RwLock<Config>>) {
     });
 }
 
+/// Installe les gestionnaires de signaux Unix.
+///
+/// - `SIGUSR1` : déclenche une sauvegarde immédiate du snapshot sans interrompre le serveur.
+/// - `SIGHUP`  : recharge la configuration depuis le fichier TOML à chaud.
 #[cfg(unix)]
 fn spawn_signal_handlers(
     store: SharedStore,
