@@ -1,28 +1,55 @@
+//! Parsing des commandes textuelles du protocole MicroCache.
+//!
+//! Le protocole est inspiré de Redis en mode texte simple :
+//! chaque commande est une ligne terminée par `\n` ou `\r\n`.
+//!
+//! # Commandes supportées
+//! | Commande | Syntaxe |
+//! |---|---|
+//! | `PING` | `PING` |
+//! | `SET` (token) | `SET key value [EX seconds]` |
+//! | `SET` (binaire) | `SET key $<len> [EX seconds]` suivi de `len` octets |
+//! | `GET` | `GET key` |
+//! | `DEL` | `DEL key` |
+//! | `KEYS` | `KEYS pattern` |
+//! | `EXISTS` | `EXISTS key` |
+//! | `TTL` | `TTL key` |
+
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
+/// Commande MicroCache prête à exécuter.
+///
+/// Produite par [`parse_line`] lorsque tous les arguments sont connus.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Command {
+    /// Stocke `value` sous `key` avec un TTL optionnel en secondes.
     Set {
         key: String,
         value: Vec<u8>,
         ex_seconds: Option<u64>,
     },
+    /// Lit la valeur associée à `key`.
     Get {
         key: String,
     },
+    /// Supprime `key` du cache.
     Del {
         key: String,
     },
+    /// Liste toutes les clés correspondant à `pattern` (wildcard `*`).
     Keys {
         pattern: String,
     },
+    /// Vérifie si `key` est présente et non-expirée.
     Exists {
         key: String,
     },
+    /// Retourne le TTL restant de `key` en secondes (`-1` = pas d'expiration, `-2` = absente).
     Ttl {
         key: String,
     },
+    /// Commande de contrôle : vérifie que le serveur est en vie.
     Ping,
 }
 
@@ -42,12 +69,18 @@ pub enum ParsedLine {
     },
 }
 
+/// Erreur retournée par [`parse_line`] en cas de commande invalide.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParseError {
+    /// Ligne vide ou composée uniquement d'espaces.
     Empty,
+    /// Commande non reconnue (ex : `FLUSHALL`).
     UnknownCommand(String),
+    /// Nombre d'arguments incorrect pour la commande.
     InvalidArity(&'static str),
+    /// La valeur fournie pour `EX` n'est pas un entier positif valide.
     InvalidTtl,
+    /// La longueur annoncée dans le framing binaire `$<len>` est invalide.
     InvalidBulkLen,
 }
 

@@ -1,3 +1,14 @@
+//! Persistance de MicroCache : configuration TOML et snapshots binaires.
+//!
+//! # Configuration
+//! Lue depuis un fichier TOML (par défaut `microcache.toml`).
+//! Si le fichier est absent, les valeurs par défaut sont utilisées sans erreur.
+//!
+//! # Snapshots
+//! Le store est sérialisé via [`bincode`] dans un fichier binaire.
+//! À chaque entrée, le TTL restant est converti en millisecondes pour être reconstitué au rechargement.
+//! Les entrées expirées sont exclues du snapshot.
+
 use crate::store::{SharedStore, Store};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -6,10 +17,14 @@ use std::io;
 use std::path::Path;
 use std::time::{Duration, Instant};
 
+/// Configuration du serveur MicroCache lue depuis `microcache.toml`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
+    /// Adresse et port TCP d'écoute (ex : `"127.0.0.1:6379"`).
     pub bind_addr: String,
+    /// Chemin du fichier snapshot binaire.
     pub snapshot_path: String,
+    /// Intervalle en secondes entre deux sauvegardes automatiques du snapshot.
     pub snapshot_interval_secs: u64,
 }
 
@@ -23,6 +38,8 @@ impl Default for Config {
     }
 }
 
+/// Entrée dans la structure de snapshot sérialisée sur disque.
+/// Le TTL est stocké en millisecondes pour éviter une perte de précision lors de la sérialisation.
 #[derive(Debug, Serialize, Deserialize)]
 struct SnapshotEntry {
     value: Vec<u8>,
@@ -31,6 +48,9 @@ struct SnapshotEntry {
 
 type Snapshot = HashMap<String, SnapshotEntry>;
 
+/// Charge la configuration depuis `path`.
+/// Si le fichier n'existe pas, retourne [`Config::default`] sans erreur.
+/// Si le fichier existe mais est invalide, retourne une erreur `InvalidData`.
 pub fn load_config(path: &Path) -> io::Result<Config> {
     if !path.exists() {
         return Ok(Config::default());
@@ -40,6 +60,10 @@ pub fn load_config(path: &Path) -> io::Result<Config> {
     toml::from_str::<Config>(&content).map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))
 }
 
+/// Sauvegarde le store sur disque au format binaire (bincode).
+///
+/// Seules les entrées non-expirées sont incluses.
+/// En cas d'empoisonnement du verrou du store, retourne une erreur.
 pub fn save_snapshot(store: &SharedStore, path: &Path) -> io::Result<()> {
     let guard = store
         .read()
@@ -65,6 +89,10 @@ pub fn save_snapshot(store: &SharedStore, path: &Path) -> io::Result<()> {
     fs::write(path, bytes)
 }
 
+/// Charge un snapshot depuis `path` et reconstruit un [`Store`].
+///
+/// Si le fichier n'existe pas, retourne un `Store` vide sans erreur.
+/// Les TTL sont recalculés à partir des millisecondes stockées dans le snapshot.
 pub fn load_snapshot(path: &Path) -> io::Result<Store> {
     if !path.exists() {
         return Ok(Store::new());
