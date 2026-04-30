@@ -226,7 +226,7 @@ class MicroCacheClient {
     try {
       this.stats.totalCommands++;
       const response = await this.enqueueCommand('PING');
-      return response === 'PONG';
+      return response.includes('PONG');
     } catch (err) {
       return false;
     }
@@ -234,7 +234,7 @@ class MicroCacheClient {
 
   /**
    * GET key → retourne la valeur ou null
-   * Réponse : "valeur\n" ou "NIL\n"
+   * Réponse : "valeur\r\n" ou "NIL\r\n"
    */
   async get(key) {
     try {
@@ -272,7 +272,7 @@ class MicroCacheClient {
       const response = await this.enqueueCommand(command);
       console.log('[CACHE DEBUG] SET response raw:', JSON.stringify(response));
 
-      return response === 'OK';
+      return response.includes('OK');
     } catch (err) {
       throw err;
     }
@@ -280,13 +280,13 @@ class MicroCacheClient {
 
   /**
    * DEL key
-   * Réponse : "OK\n"
+   * Réponse : "OK\r\n"
    */
   async del(key) {
     try {
       this.stats.totalCommands++;
       const response = await this.enqueueCommand(`DEL ${key}`);
-      return response === 'OK';
+      return response.includes('OK');
     } catch (err) {
       throw err;
     }
@@ -300,7 +300,7 @@ class MicroCacheClient {
     try {
       this.stats.totalCommands++;
       const response = await this.enqueueCommand(`EXISTS ${key}`);
-      return response === '1';
+      return response.includes('1');
     } catch (err) {
       throw err;
     }
