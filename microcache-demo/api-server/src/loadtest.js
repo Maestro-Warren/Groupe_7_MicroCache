@@ -10,7 +10,7 @@
  *   --requests N      Total requests per route (default 100)
  *   --concurrency N   Max concurrent requests (default 10)
  *   --duration S      Test duration in seconds (overrides --requests)
- *   --concertId ID    Concert to test (default 1, or "random" for 1-5 random)
+ *   --concertId ID    Concert to test (default 1)
  *   --baseUrl URL     API base URL (default http://localhost:3000)
  */
 
@@ -22,7 +22,6 @@ function parseArgs() {
     concurrency: 10,
     duration: null,
     concertId: 1,
-    concertIdRandom: false,
     baseUrl: 'http://localhost:3000',
   };
 
@@ -30,28 +29,11 @@ function parseArgs() {
     if (args[i] === '--requests') config.requests = parseInt(args[i + 1], 10);
     if (args[i] === '--concurrency') config.concurrency = parseInt(args[i + 1], 10);
     if (args[i] === '--duration') config.duration = parseInt(args[i + 1], 10);
-    if (args[i] === '--concertId') {
-      const concertIdArg = args[i + 1];
-      if (concertIdArg === 'random') {
-        config.concertIdRandom = true;
-        config.concertId = null;
-      } else {
-        config.concertId = parseInt(concertIdArg, 10);
-        config.concertIdRandom = false;
-      }
-    }
+    if (args[i] === '--concertId') config.concertId = parseInt(args[i + 1], 10);
     if (args[i] === '--baseUrl') config.baseUrl = args[i + 1];
   }
 
   return config;
-}
-
-// ===== GENERATE RANDOM CONCERT ID =====
-function getNextConcertId(config) {
-  if (config.concertIdRandom) {
-    return Math.floor(Math.random() * 5) + 1; // 1 à 5
-  }
-  return config.concertId;
 }
 
 // ===== TIMED FETCH =====
@@ -192,7 +174,7 @@ async function main() {
 
   console.log('\n✓ Configuration chargée');
   console.log(`  - Base URL: ${config.baseUrl}`);
-  console.log(`  - Concert: ${config.concertIdRandom ? 'aléatoire (1-5)' : `#${config.concertId}`}`);
+  console.log(`  - Concert: #${config.concertId}`);
   console.log(`  - Concurrence: ${config.concurrency}`);
 
   if (config.duration) {
@@ -234,9 +216,8 @@ async function main() {
     for (let i = 0; i < batchSize; i++) {
       // Requête cache
       tasks.push(async () => {
-        const cId = getNextConcertId(config);
         const res = await timedFetch(
-          `${config.baseUrl}/api/tickets?concertId=${cId}`
+          `${config.baseUrl}/api/tickets?concertId=${config.concertId}`
         );
         allResultsCache.push(res);
         completedCache++;
@@ -245,9 +226,8 @@ async function main() {
 
       // Requête sans cache
       tasks.push(async () => {
-        const cId = getNextConcertId(config);
         const res = await timedFetch(
-          `${config.baseUrl}/api/tickets/nocache?concertId=${cId}`
+          `${config.baseUrl}/api/tickets/nocache?concertId=${config.concertId}`
         );
         allResultsNocache.push(res);
         completedNocache++;
@@ -302,15 +282,14 @@ async function main() {
     4: 'WizKid @ Stade de France',
     5: 'Aya Nakamura @ Accor Arena',
   };
-  const concertLabel = config.concertIdRandom ? 'aléatoire (1-5)' : `#${config.concertId}`;
-  const concertName = config.concertIdRandom ? 'plusieurs concerts' : (concerts[config.concertId] || `Concert #${config.concertId}`);
+  const concertName = concerts[config.concertId] || `Concert #${config.concertId}`;
 
   // ===== PRINT REPORT =====
   console.log('\n');
   console.log('╔═══════════════════════════════════════════════════════════════╗');
   console.log('║           MicroCache — Rapport de performance                  ║');
   console.log('╠═══════════════════════════════════════════════════════════════╣');
-  console.log(`║  Concert testé  : ${concertLabel} — ${concertName.padEnd(45)} ║`);
+  console.log(`║  Concert testé  : #${config.concertId} — ${concertName.padEnd(45)} ║`);
   console.log(`║  Requêtes/route : ${String(statsCache.count).padEnd(53)} ║`);
   console.log(
     `║  Concurrence    : ${String(config.concurrency).padEnd(53)} ║`
