@@ -202,8 +202,10 @@
       background: white; border-radius: 16px; padding: 22px 24px;
       box-shadow: 0 1px 12px rgba(0,0,0,0.05); border-top: 3px solid #e5e7eb;
     }
+    .metric-card:nth-child(1) { border-top-color: #ef4444; }
     .metric-card:nth-child(2) { border-top-color: #10b981; }
     .metric-card:nth-child(3) { border-top-color: #f59e0b; }
+    .metric-card:nth-child(4) { border-top-color: #3b82f6; }
 
     .metric-label {
       font-size: 11px; font-weight: 700; text-transform: uppercase;
@@ -418,7 +420,7 @@
     @keyframes pulse-icon {
       0%, 100% { transform: scale(1); }
       50%       { transform: scale(1.15); }
-    }
+    } 
 
     /* ===== LOG ===== */
     .log-section {
@@ -715,10 +717,10 @@
         </button>
         <button class="traffic-btn btn-panic" onclick="setTrafficMode('panic', event)">
           <div class="traffic-btn-icon">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M12 2L2 20h20L12 2z" fill="currentColor"/>
-              <circle cx="12" cy="16" r="1" fill="white"/>
-              <rect x="11" y="9" width="2" height="5" fill="white"/>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+              <path d="M12 2L2 20h20L12 2z"/>
+              <circle cx="12" cy="16" r="1" fill="currentColor"/>
+              <rect x="11" y="9" width="2" height="5" fill="currentColor"/>
             </svg>
           </div>
           <div class="traffic-btn-body">
