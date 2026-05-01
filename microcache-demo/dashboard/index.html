@@ -1,15 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MicroCache — Performance Dashboard</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache — Performance Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  </head>
   <style>
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
+        sans-serif;
       background: #9ea3a0;
       min-height: 100vh;
       padding: 24px;
@@ -19,39 +28,73 @@
     }
 
     body::before {
-      content: '';
+      content: "";
       position: fixed;
       inset: 0;
       z-index: 0;
       background:
-        radial-gradient(ellipse 75% 55% at  5%   0%,  rgba(16,185,129,0.22)  0%, transparent 55%),
-        radial-gradient(ellipse 55% 45% at 95%   5%,  rgba(99,102,241,0.14)  0%, transparent 50%),
-        radial-gradient(ellipse 65% 50% at 85%  95%,  rgba(6,182,212,0.16)   0%, transparent 55%),
-        radial-gradient(ellipse 55% 45% at 10%  90%,  rgba(52,211,153,0.18)  0%, transparent 50%),
-        radial-gradient(ellipse 80% 70% at 50%  50%,  rgba(236,253,245,1)    0%, transparent 75%);
+        radial-gradient(
+          ellipse 75% 55% at 5% 0%,
+          rgba(16, 185, 129, 0.22) 0%,
+          transparent 55%
+        ),
+        radial-gradient(
+          ellipse 55% 45% at 95% 5%,
+          rgba(99, 102, 241, 0.14) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse 65% 50% at 85% 95%,
+          rgba(6, 182, 212, 0.16) 0%,
+          transparent 55%
+        ),
+        radial-gradient(
+          ellipse 55% 45% at 10% 90%,
+          rgba(52, 211, 153, 0.18) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse 80% 70% at 50% 50%,
+          rgba(236, 253, 245, 1) 0%,
+          transparent 75%
+        );
       background-color: #ccd2cf;
       animation: bgShift 20s ease-in-out infinite alternate;
       pointer-events: none;
     }
 
     body::after {
-      content: '';
+      content: "";
       position: fixed;
       inset: 0;
       z-index: 0;
-      background-image:
-        radial-gradient(circle, rgba(16,185,129,0.08) 1px, transparent 1px);
+      background-image: radial-gradient(
+        circle,
+        rgba(16, 185, 129, 0.08) 1px,
+        transparent 1px
+      );
       background-size: 40px 40px;
       pointer-events: none;
     }
 
     @keyframes bgShift {
-      0%   { transform: scale(1)    rotate(0deg); }
-      50%  { transform: scale(1.03) rotate(0.4deg); }
-      100% { transform: scale(1)    rotate(-0.4deg); }
+      0% {
+        transform: scale(1) rotate(0deg);
+      }
+      50% {
+        transform: scale(1.03) rotate(0.4deg);
+      }
+      100% {
+        transform: scale(1) rotate(-0.4deg);
+      }
     }
 
-    .container { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
 
     /* ===== HERO ===== */
     .hero {
@@ -65,32 +108,54 @@
       gap: 40px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 1px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 20px rgba(0, 0, 0, 0.06);
     }
 
     .hero::before {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 60% at 0%   0%,   rgba(167,139,250,0.14) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 100%  0%,   rgba(96,165,250,0.10)  0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 100% 100%,  rgba(52,211,153,0.10)  0%, transparent 60%),
-        radial-gradient(ellipse 60% 60% at 0%  100%,   rgba(251,146,60,0.10)  0%, transparent 60%);
+        radial-gradient(
+          ellipse 60% 60% at 0% 0%,
+          rgba(167, 139, 250, 0.14) 0%,
+          transparent 60%
+        ),
+        radial-gradient(
+          ellipse 50% 50% at 100% 0%,
+          rgba(96, 165, 250, 0.1) 0%,
+          transparent 60%
+        ),
+        radial-gradient(
+          ellipse 50% 50% at 100% 100%,
+          rgba(52, 211, 153, 0.1) 0%,
+          transparent 60%
+        ),
+        radial-gradient(
+          ellipse 60% 60% at 0% 100%,
+          rgba(251, 146, 60, 0.1) 0%,
+          transparent 60%
+        );
       pointer-events: none;
       z-index: 0;
     }
 
-    .hero > * { position: relative; z-index: 1; }
-    .hero-left { flex: 1; min-width: 0; }
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+    .hero-left {
+      flex: 1;
+      min-width: 0;
+    }
 
     .live-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(16,185,129,0.08);
+      background: rgba(16, 185, 129, 0.08);
       color: #059669;
-      border: 1px solid rgba(16,185,129,0.25);
+      border: 1px solid rgba(16, 185, 129, 0.25);
       border-radius: 100px;
       padding: 4px 14px;
       font-size: 11px;
@@ -101,203 +166,532 @@
     }
 
     .live-badge-dot {
-      width: 6px; height: 6px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: #10b981;
       animation: blink 1.5s infinite;
     }
 
     @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.3;
+      }
     }
 
-    .hero-title { margin-bottom: 14px; line-height: 1.1; }
-    .hero-title .brand   { display: block; font-size: 42px; font-weight: 900; color: #0f172a; letter-spacing: -1px; }
-    .hero-title .tagline { display: block; font-size: 42px; font-weight: 900; color: #10b981; letter-spacing: -1px; }
+    .hero-title {
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+    .hero-title .brand {
+      display: block;
+      font-size: 42px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -1px;
+    }
+    .hero-title .tagline {
+      display: block;
+      font-size: 42px;
+      font-weight: 900;
+      color: #10b981;
+      letter-spacing: -1px;
+    }
 
     .hero-subtitle {
-      color: #6b7280; font-size: 14px; line-height: 1.65; max-width: 420px; margin-bottom: 24px;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.65;
+      max-width: 420px;
+      margin-bottom: 24px;
     }
 
-    .hero-controls { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .hero-controls {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
 
     .live-status {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 13px; font-weight: 600; color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
     }
     .live-status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #10b981; animation: blink 1.5s infinite;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: blink 1.5s infinite;
     }
 
     .concert-control {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; font-weight: 600; color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
     }
     .concert-control .concert-label {
-      color: #9ca3af; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px;
+      color: #9ca3af;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 12px;
     }
     .concert-control select {
-      padding: 7px 10px; border: 1.5px solid #e5e7eb; border-radius: 8px;
-      font-size: 13px; font-weight: 500; color: #374151;
-      background: white; cursor: pointer; outline: none;
+      padding: 7px 10px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      background: white;
+      cursor: pointer;
+      outline: none;
     }
-    .concert-control select:focus { border-color: #10b981; }
+    .concert-control select:focus {
+      border-color: #10b981;
+    }
 
     /* ===== TICKET ===== */
-    .ticket-illustration { flex-shrink: 0; width: 260px; }
+    .ticket-illustration {
+      flex-shrink: 0;
+      width: 260px;
+    }
 
     .ticket-card {
-      background: linear-gradient(135deg, #059669 0%, #10b981 45%, #34d399 100%);
-      border-radius: 16px; padding: 20px; color: white;
-      position: relative; overflow: hidden;
-      box-shadow: 0 8px 32px rgba(16,185,129,0.3);
+      background: linear-gradient(
+        135deg,
+        #059669 0%,
+        #10b981 45%,
+        #34d399 100%
+      );
+      border-radius: 16px;
+      padding: 20px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
     }
     .ticket-card::before {
-      content: ''; position: absolute; top: -30px; right: -30px;
-      width: 120px; height: 120px; background: rgba(255,255,255,0.07); border-radius: 50%;
+      content: "";
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 50%;
     }
     .ticket-card::after {
-      content: ''; position: absolute; bottom: -20px; left: -20px;
-      width: 80px; height: 80px; background: rgba(255,255,255,0.04); border-radius: 50%;
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      left: -20px;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 50%;
     }
 
-    .ticket-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .ticket-brand { font-size: 10px; font-weight: 800; letter-spacing: 2px; opacity: 0.7; }
-    .ticket-lines-group { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-    .ticket-line-item { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.35); }
-    .ticket-line-item:nth-child(1) { width: 50px; }
-    .ticket-line-item:nth-child(2) { width: 32px; }
-    .ticket-line-item:nth-child(3) { width: 42px; }
+    .ticket-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .ticket-brand {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      opacity: 0.7;
+    }
+    .ticket-lines-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+    }
+    .ticket-line-item {
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .ticket-line-item:nth-child(1) {
+      width: 50px;
+    }
+    .ticket-line-item:nth-child(2) {
+      width: 32px;
+    }
+    .ticket-line-item:nth-child(3) {
+      width: 42px;
+    }
 
     .ticket-main {
-      display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
-    .ticket-event-name { font-size: 16px; font-weight: 800; line-height: 1.3; }
+    .ticket-event-name {
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
 
     .ticket-bolt {
-      width: 40px; height: 40px; background: #ef4444; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(239,68,68,0.4);
+      width: 40px;
+      height: 40px;
+      background: #ef4444;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
     }
 
-    .ticket-bars-row { display: flex; align-items: flex-end; gap: 4px; height: 40px; margin-bottom: 14px; }
-    .ticket-bar { border-radius: 3px 3px 0 0; flex: 1; }
-    .ticket-bar:nth-child(1) { height: 50%;  background: rgba(255,255,255,0.35); }
-    .ticket-bar:nth-child(2) { height: 80%;  background: rgba(255,255,255,0.55); }
-    .ticket-bar:nth-child(3) { height: 65%;  background: rgba(255,255,255,0.45); }
-    .ticket-bar:nth-child(4) { height: 100%; background: rgba(255,255,255,0.70); }
-    .ticket-bar:nth-child(5) { height: 75%;  background: rgba(255,255,255,0.55); }
-    .ticket-bar:nth-child(6) { height: 90%;  background: rgba(255,255,255,0.65); }
+    .ticket-bars-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 40px;
+      margin-bottom: 14px;
+    }
+    .ticket-bar {
+      border-radius: 3px 3px 0 0;
+      flex: 1;
+    }
+    .ticket-bar:nth-child(1) {
+      height: 50%;
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .ticket-bar:nth-child(2) {
+      height: 80%;
+      background: rgba(255, 255, 255, 0.55);
+    }
+    .ticket-bar:nth-child(3) {
+      height: 65%;
+      background: rgba(255, 255, 255, 0.45);
+    }
+    .ticket-bar:nth-child(4) {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.7);
+    }
+    .ticket-bar:nth-child(5) {
+      height: 75%;
+      background: rgba(255, 255, 255, 0.55);
+    }
+    .ticket-bar:nth-child(6) {
+      height: 90%;
+      background: rgba(255, 255, 255, 0.65);
+    }
 
-    .ticket-perforations { border-top: 2px dashed rgba(255,255,255,0.25); padding-top: 10px; }
-    .ticket-perf-num { font-size: 9px; font-weight: 700; letter-spacing: 1px; opacity: 0.5; }
+    .ticket-perforations {
+      border-top: 2px dashed rgba(255, 255, 255, 0.25);
+      padding-top: 10px;
+    }
+    .ticket-perf-num {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      opacity: 0.5;
+    }
 
     /* ===== METRICS ===== */
     .metrics-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
     }
     .metric-card {
-      background: white; border-radius: 16px; padding: 22px 24px;
-      box-shadow: 0 1px 12px rgba(0,0,0,0.05); border-top: 3px solid #e5e7eb;
+      background: white;
+      border-radius: 16px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
+      border-top: 3px solid #e5e7eb;
     }
-    .metric-card:nth-child(2) { border-top-color: #10b981; }
-    .metric-card:nth-child(3) { border-top-color: #f59e0b; }
+    .metric-card:nth-child(2) {
+      border-top-color: #10b981;
+    }
+    .metric-card:nth-child(3) {
+      border-top-color: #f59e0b;
+    }
 
     .metric-label {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1px; color: #9ca3af; margin-bottom: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9ca3af;
+      margin-bottom: 10px;
     }
-    .metric-value { font-size: 38px; font-weight: 800; color: #111827; line-height: 1; margin-bottom: 6px; }
-    .metric-card:nth-child(2) .metric-value { color: #10b981; }
-    .metric-card:nth-child(3) .metric-value { color: #f59e0b; }
-    .metric-sublabel { font-size: 12px; color: #9ca3af; font-weight: 500; }
+    .metric-value {
+      font-size: 38px;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .metric-card:nth-child(2) .metric-value {
+      color: #10b981;
+    }
+    .metric-card:nth-child(3) .metric-value {
+      color: #f59e0b;
+    }
+    .metric-sublabel {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
 
     /* ===== COMPARISON ===== */
     .comparison-section {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
     }
     .panel {
-      background: white; border-radius: 16px; padding: 28px;
-      box-shadow: 0 1px 12px rgba(0,0,0,0.05);
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
     }
-    .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .panel-title { font-size: 18px; font-weight: 700; color: #111827; }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
 
     .panel-badge {
-      font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
-      text-transform: uppercase; padding: 4px 10px; border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 6px;
     }
-    .panel-badge.db    { background: rgba(239,68,68,0.08);  color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
-    .panel-badge.cache { background: rgba(16,185,129,0.08); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+    .panel-badge.db {
+      background: rgba(239, 68, 68, 0.08);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .panel-badge.cache {
+      background: rgba(16, 185, 129, 0.08);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
 
     .panel-metric-label {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1px; color: #9ca3af; margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9ca3af;
+      margin-bottom: 8px;
     }
-    .panel-metric-value { font-size: 36px; font-weight: 800; line-height: 1; margin-bottom: 10px; }
-    .panel.without-cache .panel-metric-value { color: #ef4444; }
-    .panel.with-cache    .panel-metric-value { color: #10b981; }
+    .panel-metric-value {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .panel.without-cache .panel-metric-value {
+      color: #ef4444;
+    }
+    .panel.with-cache .panel-metric-value {
+      color: #10b981;
+    }
 
-    .latency-bar { width: 100%; height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
-    .latency-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
-    .panel.without-cache .latency-bar-fill { background: #ef4444; }
-    .panel.with-cache    .latency-bar-fill { background: #10b981; }
+    .latency-bar {
+      width: 100%;
+      height: 6px;
+      background: #f3f4f6;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .latency-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+    .panel.without-cache .latency-bar-fill {
+      background: #ef4444;
+    }
+    .panel.with-cache .latency-bar-fill {
+      background: #10b981;
+    }
 
-    .panel.overloaded { animation: blink-panel 0.8s infinite; }
+    .panel.overloaded {
+      animation: blink-panel 0.8s infinite;
+    }
     @keyframes blink-panel {
-      0%, 100% { box-shadow: 0 0 0 2px rgba(239,68,68,0.3); }
-      50%       { box-shadow: 0 0 0 4px rgba(239,68,68,0.5); background: #fff5f5; }
+      0%,
+      100% {
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.5);
+        background: #fff5f5;
+      }
     }
 
     /* ===== CHART ===== */
     .chart-section {
-      background: white; border-radius: 16px; padding: 28px;
-      box-shadow: 0 1px 12px rgba(0,0,0,0.05); margin-bottom: 24px;
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 24px;
     }
     .chart-section-header {
-      display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
     }
-    .chart-section-title    { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 4px; }
-    .chart-section-subtitle { font-size: 12px; color: #9ca3af; }
+    .chart-section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    .chart-section-subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+    }
 
-    .chart-legend { display: flex; gap: 16px; align-items: center; }
-    .legend-item  { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #374151; }
-    .legend-dot   { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .legend-dot.red   { background: #ef4444; }
-    .legend-dot.green { background: #10b981; }
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-dot.red {
+      background: #ef4444;
+    }
+    .legend-dot.green {
+      background: #10b981;
+    }
 
-    .chart-body      { display: flex; gap: 32px; align-items: center; }
-    .chart-container { flex: 1; position: relative; height: 220px; }
+    .chart-body {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .chart-container {
+      flex: 1;
+      position: relative;
+      height: 220px;
+    }
 
     .gauge-container {
-      width: 140px; flex-shrink: 0; display: flex;
-      flex-direction: column; align-items: center; gap: 6px;
+      width: 140px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
-    .gauge-label  {
-      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-      text-transform: uppercase; color: #9ca3af; text-align: center;
+    .gauge-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #9ca3af;
+      text-align: center;
     }
-    .gauge-wrapper { position: relative; width: 120px; height: 120px; }
-    .gauge-canvas  { width: 120px; height: 120px; }
-    .gauge-center  {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    .gauge-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
     }
-    .gauge-value { font-size: 22px; font-weight: 800; color: #10b981; line-height: 1; }
-    .gauge-sub   { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+    .gauge-canvas {
+      width: 120px;
+      height: 120px;
+    }
+    .gauge-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .gauge-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #10b981;
+      line-height: 1;
+    }
+    .gauge-sub {
+      font-size: 10px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
 
     /* ===== TRAFFIC ===== */
     .traffic-section {
-      background: white; border-radius: 16px; padding: 28px;
-      box-shadow: 0 1px 12px rgba(0,0,0,0.05); margin-bottom: 24px;
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 24px;
     }
-    .traffic-header   { margin-bottom: 20px; }
-    .traffic-title    { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 4px; }
-    .traffic-subtitle { font-size: 12px; color: #9ca3af; }
+    .traffic-header {
+      margin-bottom: 20px;
+    }
+    .traffic-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    .traffic-subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+    }
 
-    .traffic-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .traffic-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
 
     .traffic-btn {
       display: flex;
@@ -308,7 +702,7 @@
       border: 1.5px solid transparent;
       border-radius: 14px;
       cursor: pointer;
-      transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
       text-align: left;
       position: relative;
       overflow: hidden;
@@ -316,7 +710,7 @@
     }
 
     .traffic-btn::before {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       opacity: 0;
@@ -324,19 +718,30 @@
       border-radius: 14px;
     }
 
-    .traffic-btn:hover:not(.active)::before { opacity: 1; }
-    .traffic-btn:hover:not(.active) { transform: translateY(-2px); }
-
-    .traffic-btn-icon {
-      width: 38px; height: 38px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px;
-      flex-shrink: 0;
-      position: relative; z-index: 1;
+    .traffic-btn:hover:not(.active)::before {
+      opacity: 1;
+    }
+    .traffic-btn:hover:not(.active) {
+      transform: translateY(-2px);
     }
 
-    .traffic-btn-body { position: relative; z-index: 1; }
+    .traffic-btn-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .traffic-btn-body {
+      position: relative;
+      z-index: 1;
+    }
 
     .traffic-btn-label {
       font-size: 13px;
@@ -355,90 +760,177 @@
     /* STOP */
     .traffic-btn.btn-stop {
       border-color: #e5e7eb;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
     }
     .traffic-btn.btn-stop .traffic-btn-icon {
       background: #f3f4f6;
       color: #374151;
     }
-    .traffic-btn.btn-stop .traffic-btn-label { color: #374151; }
-    .traffic-btn.btn-stop .traffic-btn-sub   { color: #6b7280; }
-    .traffic-btn.btn-stop::before { background: linear-gradient(135deg, #f9fafb, #f3f4f6); }
+    .traffic-btn.btn-stop .traffic-btn-label {
+      color: #374151;
+    }
+    .traffic-btn.btn-stop .traffic-btn-sub {
+      color: #6b7280;
+    }
+    .traffic-btn.btn-stop::before {
+      background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+    }
 
     /* NORMAL */
     .traffic-btn.btn-normal {
-      border-color: rgba(16,185,129,0.25);
-      box-shadow: 0 1px 6px rgba(16,185,129,0.08);
+      border-color: rgba(16, 185, 129, 0.25);
+      box-shadow: 0 1px 6px rgba(16, 185, 129, 0.08);
     }
     .traffic-btn.btn-normal .traffic-btn-icon {
-      background: rgba(16,185,129,0.12);
+      background: rgba(16, 185, 129, 0.12);
       color: #059669;
     }
-    .traffic-btn.btn-normal .traffic-btn-label { color: #059669; }
-    .traffic-btn.btn-normal .traffic-btn-sub   { color: #6b7280; }
-    .traffic-btn.btn-normal::before { background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(52,211,153,0.10)); }
+    .traffic-btn.btn-normal .traffic-btn-label {
+      color: #059669;
+    }
+    .traffic-btn.btn-normal .traffic-btn-sub {
+      color: #6b7280;
+    }
+    .traffic-btn.btn-normal::before {
+      background: linear-gradient(
+        135deg,
+        rgba(16, 185, 129, 0.06),
+        rgba(52, 211, 153, 0.1)
+      );
+    }
 
     /* RUSH */
     .traffic-btn.btn-rush {
-      border-color: rgba(245,158,11,0.25);
-      box-shadow: 0 1px 6px rgba(245,158,11,0.08);
+      border-color: rgba(245, 158, 11, 0.25);
+      box-shadow: 0 1px 6px rgba(245, 158, 11, 0.08);
     }
     .traffic-btn.btn-rush .traffic-btn-icon {
-      background: rgba(245,158,11,0.12);
+      background: rgba(245, 158, 11, 0.12);
       color: #d97706;
     }
-    .traffic-btn.btn-rush .traffic-btn-label { color: #d97706; }
-    .traffic-btn.btn-rush .traffic-btn-sub   { color: #6b7280; }
-    .traffic-btn.btn-rush::before { background: linear-gradient(135deg, rgba(245,158,11,0.06), rgba(251,191,36,0.10)); }
+    .traffic-btn.btn-rush .traffic-btn-label {
+      color: #d97706;
+    }
+    .traffic-btn.btn-rush .traffic-btn-sub {
+      color: #6b7280;
+    }
+    .traffic-btn.btn-rush::before {
+      background: linear-gradient(
+        135deg,
+        rgba(245, 158, 11, 0.06),
+        rgba(251, 191, 36, 0.1)
+      );
+    }
 
     /* PANIC */
     .traffic-btn.btn-panic {
-      border-color: rgba(239,68,68,0.25);
-      box-shadow: 0 1px 6px rgba(239,68,68,0.08);
+      border-color: rgba(239, 68, 68, 0.25);
+      box-shadow: 0 1px 6px rgba(239, 68, 68, 0.08);
     }
     .traffic-btn.btn-panic .traffic-btn-icon {
-      background: rgba(239,68,68,0.10);
+      background: rgba(239, 68, 68, 0.1);
       color: #dc2626;
     }
-    .traffic-btn.btn-panic .traffic-btn-label { color: #dc2626; }
-    .traffic-btn.btn-panic .traffic-btn-sub   { color: #6b7280; }
-    .traffic-btn.btn-panic::before { background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(248,113,113,0.10)); }
+    .traffic-btn.btn-panic .traffic-btn-label {
+      color: #dc2626;
+    }
+    .traffic-btn.btn-panic .traffic-btn-sub {
+      color: #6b7280;
+    }
+    .traffic-btn.btn-panic::before {
+      background: linear-gradient(
+        135deg,
+        rgba(239, 68, 68, 0.06),
+        rgba(248, 113, 113, 0.1)
+      );
+    }
 
     /* ACTIVE STATES */
-    .traffic-btn.btn-stop.active   { background: #374151;  border-color: #374151;  box-shadow: 0 6px 20px rgba(55,65,81,0.35);  transform: translateY(-2px); }
-    .traffic-btn.btn-normal.active { background: #10b981;  border-color: #10b981;  box-shadow: 0 6px 20px rgba(16,185,129,0.40); transform: translateY(-2px); }
-    .traffic-btn.btn-rush.active   { background: #f59e0b;  border-color: #f59e0b;  box-shadow: 0 6px 20px rgba(245,158,11,0.40); transform: translateY(-2px); }
-    .traffic-btn.btn-panic.active  { background: #ef4444;  border-color: #ef4444;  box-shadow: 0 6px 20px rgba(239,68,68,0.40);  transform: translateY(-2px); }
+    .traffic-btn.btn-stop.active {
+      background: #374151;
+      border-color: #374151;
+      box-shadow: 0 6px 20px rgba(55, 65, 81, 0.35);
+      transform: translateY(-2px);
+    }
+    .traffic-btn.btn-normal.active {
+      background: #10b981;
+      border-color: #10b981;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      transform: translateY(-2px);
+    }
+    .traffic-btn.btn-rush.active {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+      transform: translateY(-2px);
+    }
+    .traffic-btn.btn-panic.active {
+      background: #ef4444;
+      border-color: #ef4444;
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+      transform: translateY(-2px);
+    }
 
-    .traffic-btn.active .traffic-btn-icon  { background: rgba(255,255,255,0.20); color: white; }
-    .traffic-btn.active .traffic-btn-label { color: white; }
-    .traffic-btn.active .traffic-btn-sub   { color: rgba(255,255,255,0.75); }
+    .traffic-btn.active .traffic-btn-icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    .traffic-btn.active .traffic-btn-label {
+      color: white;
+    }
+    .traffic-btn.active .traffic-btn-sub {
+      color: rgba(255, 255, 255, 0.75);
+    }
 
-    .traffic-btn.btn-panic.active .traffic-btn-icon { animation: pulse-icon 0.9s ease-in-out infinite; }
+    .traffic-btn.btn-panic.active .traffic-btn-icon {
+      animation: pulse-icon 0.9s ease-in-out infinite;
+    }
     @keyframes pulse-icon {
-      0%, 100% { transform: scale(1); }
-      50%       { transform: scale(1.15); }
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.15);
+      }
     }
 
     /* ===== LOG ===== */
     .log-section {
-      background: white; border-radius: 16px; padding: 28px;
-      box-shadow: 0 1px 12px rgba(0,0,0,0.05);
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
     }
 
     .log-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
 
-    .log-title { font-size: 18px; font-weight: 700; color: #111827; }
+    .log-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
 
     .log-live-indicator {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
-      text-transform: uppercase; color: #10b981;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #10b981;
     }
     .log-live-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: #10b981;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
       animation: blink 1.4s infinite;
     }
 
@@ -446,450 +938,698 @@
       background: #0f172a;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     }
 
     .log-terminal-bar {
-      display: flex; align-items: center; gap: 7px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
       padding: 10px 14px;
       background: #1e293b;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .terminal-dot {
-      width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
-    .terminal-dot.red    { background: #ef4444; }
-    .terminal-dot.yellow { background: #f59e0b; }
-    .terminal-dot.green  { background: #10b981; }
+    .terminal-dot.red {
+      background: #ef4444;
+    }
+    .terminal-dot.yellow {
+      background: #f59e0b;
+    }
+    .terminal-dot.green {
+      background: #10b981;
+    }
 
     .terminal-title {
-      flex: 1; text-align: center;
-      font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.35);
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.35);
       letter-spacing: 0.5px;
-      font-family: 'SF Mono', 'Monaco', monospace;
+      font-family: "SF Mono", "Monaco", monospace;
     }
 
     .log-entries {
       padding: 12px 6px;
-      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      font-family: "SF Mono", "Monaco", "Courier New", monospace;
       font-size: 12px;
       max-height: 300px;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.1) transparent;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
     }
 
-    .log-entries::-webkit-scrollbar { width: 4px; }
-    .log-entries::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+    .log-entries::-webkit-scrollbar {
+      width: 4px;
+    }
+    .log-entries::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+    }
 
     .log-entry {
-      display: flex; align-items: center; gap: 10px;
-      padding: 7px 12px; border-radius: 7px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      border-radius: 7px;
       transition: background 0.15s;
     }
-    .log-entry:hover { background: rgba(255,255,255,0.04); }
+    .log-entry:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
 
     .log-time {
-      color: rgba(255,255,255,0.28);
+      color: rgba(255, 255, 255, 0.28);
       font-size: 11px;
       flex-shrink: 0;
       min-width: 66px;
     }
 
     .log-badge {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 42px; height: 18px;
-      font-weight: 800; border-radius: 5px; font-size: 9.5px;
-      letter-spacing: 0.8px; flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 18px;
+      font-weight: 800;
+      border-radius: 5px;
+      font-size: 9.5px;
+      letter-spacing: 0.8px;
+      flex-shrink: 0;
     }
-    .log-badge.hit  { background: rgba(16,185,129,0.18);  color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
-    .log-badge.miss { background: rgba(245,158,11,0.18);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
-    .log-badge.db   { background: rgba(239,68,68,0.18);   color: #f87171; border: 1px solid rgba(239,68,68,0.3);  }
+    .log-badge.hit {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .log-badge.miss {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .log-badge.db {
+      background: rgba(239, 68, 68, 0.18);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
 
-    .log-prompt { color: rgba(99,102,241,0.7); font-size: 12px; flex-shrink: 0; }
+    .log-prompt {
+      color: rgba(99, 102, 241, 0.7);
+      font-size: 12px;
+      flex-shrink: 0;
+    }
 
     .log-text {
-      flex: 1; color: rgba(255,255,255,0.55); font-size: 12px;
+      flex: 1;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 12px;
     }
-    .log-text .log-key   { color: rgba(96,165,250,0.9); }
-    .log-text .log-colon { color: rgba(255,255,255,0.25); }
-    .log-text .log-val   { color: rgba(52,211,153,0.85); }
+    .log-text .log-key {
+      color: rgba(96, 165, 250, 0.9);
+    }
+    .log-text .log-colon {
+      color: rgba(255, 255, 255, 0.25);
+    }
+    .log-text .log-val {
+      color: rgba(52, 211, 153, 0.85);
+    }
 
     .log-latency {
-      font-weight: 700; font-size: 12px; flex-shrink: 0;
-      min-width: 50px; text-align: right;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+      min-width: 50px;
+      text-align: right;
     }
-    .log-latency.fast { color: #34d399; }
-    .log-latency.slow { color: #fbbf24; }
-    .log-latency.very-slow { color: #f87171; }
+    .log-latency.fast {
+      color: #34d399;
+    }
+    .log-latency.slow {
+      color: #fbbf24;
+    }
+    .log-latency.very-slow {
+      color: #f87171;
+    }
 
     .log-empty {
-      color: rgba(255,255,255,0.25); font-style: italic;
-      padding: 20px 14px; font-size: 12px;
+      color: rgba(255, 255, 255, 0.25);
+      font-style: italic;
+      padding: 20px 14px;
+      font-size: 12px;
     }
   </style>
-</head>
-<body>
-  <div class="container">
-
-    <!-- HERO -->
-    <div class="hero">
-      <div class="hero-left">
-        <div class="live-badge"><div class="live-badge-dot"></div>Live Demo</div>
-        <div class="hero-title">
-          <span class="brand">MicroCache</span>
-          <span class="tagline">Performance Dashboard</span>
-        </div>
-        <p class="hero-subtitle">
-          Visualisez en temps r&#233;el l'impact du cache sur la billetterie concert&nbsp;: latence,
-          hit rate, speedup et comportement sous charge.
-        </p>
-        <div class="hero-controls">
-          <div class="live-status">
-            <div class="live-status-dot" id="statusDot"></div>
-            <span id="statusText">LIVE</span>
+  <body>
+    <div class="container">
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-left">
+          <div class="live-badge">
+            <div class="live-badge-dot"></div>
+            Live Demo
           </div>
-          <div class="concert-control">
-            <span class="concert-label">Concert</span>
-            <select id="concertSelect">
-              <option value="1">Burna Boy - Bercy</option>
-              <option value="2">Davido &#8212; Accor Arena</option>
-              <option value="3">Tiwa Savage &#8212; Z&#233;nith</option>
-              <option value="4">WizKid &#8212; Stade de France</option>
-              <option value="5">Aya Nakamura &#8212; Accor Arena</option>
-            </select>
+          <div class="hero-title">
+            <span class="brand">MicroCache</span>
+            <span class="tagline">Performance Dashboard</span>
           </div>
-        </div>
-      </div>
-
-      <div class="ticket-illustration">
-        <div class="ticket-card">
-          <div class="ticket-top">
-            <span class="ticket-brand">MICROCACHE</span>
-            <div class="ticket-lines-group">
-              <div class="ticket-line-item"></div>
-              <div class="ticket-line-item"></div>
-              <div class="ticket-line-item"></div>
+          <p class="hero-subtitle">
+            Visualisez en temps r&#233;el l'impact du cache sur la billetterie
+            d'un concert&nbsp;: latence, hit rate, speedup et comportement sous
+            charge.
+          </p>
+          <div class="hero-controls">
+            <div class="live-status">
+              <div class="live-status-dot" id="statusDot"></div>
+              <span id="statusText">LIVE</span>
+            </div>
+            <div class="concert-control">
+              <span class="concert-label">Concert</span>
+              <select id="concertSelect">
+                <option value="1">Burna Boy - Bercy</option>
+                <option value="2">Rema &#8212; Accor Arena</option>
+                <option value="3">Tem's &#8212; Z&#233;nith</option>
+                <option value="4">WizKid &#8212; Stade de France</option>
+                <option value="5">Aya Nakamura &#8212; Accor Arena</option>
+              </select>
             </div>
           </div>
-          <div class="ticket-main">
-            <div>
-              <div style="font-size:9px;font-weight:700;letter-spacing:1px;opacity:.6;margin-bottom:6px;">CONCERT TICKET</div>
-              <div class="ticket-event-name">MicroCache<br>Liveshow</div>
+        </div>
+
+        <div class="ticket-illustration">
+          <div class="ticket-card">
+            <div class="ticket-top">
+              <span class="ticket-brand">MICROCACHE</span>
+              <div class="ticket-lines-group">
+                <div class="ticket-line-item"></div>
+                <div class="ticket-line-item"></div>
+                <div class="ticket-line-item"></div>
+              </div>
             </div>
-            <div class="ticket-bolt">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/>
-              </svg>
+            <div class="ticket-main">
+              <div>
+                <div
+                  style="
+                    font-size: 9px;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                    opacity: 0.6;
+                    margin-bottom: 6px;
+                  "
+                >
+                  CONCERT TICKET
+                </div>
+                <div class="ticket-event-name">MicroCache<br />Liveshow</div>
+              </div>
+              <div class="ticket-bolt">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white" />
+                </svg>
+              </div>
             </div>
-          </div>
-          <div class="ticket-bars-row">
-            <div class="ticket-bar"></div><div class="ticket-bar"></div><div class="ticket-bar"></div>
-            <div class="ticket-bar"></div><div class="ticket-bar"></div><div class="ticket-bar"></div>
-          </div>
-          <div class="ticket-perforations">
-            <span class="ticket-perf-num">A7 &middot; ROW 3 &middot; SEAT 12 &middot; GATE B</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- METRICS -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="metric-label">Requ&#234;tes totales</div>
-        <div class="metric-value" id="total-requests">0</div>
-        <div class="metric-sublabel">depuis le lancement</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Taux de hit</div>
-        <div class="metric-value" id="hit-rate">0.0%</div>
-        <div class="metric-sublabel">cache hit rate</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Gain de vitesse</div>
-        <div class="metric-value" id="speedup-factor">&#8212;</div>
-        <div class="metric-sublabel">times faster</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Places disponibles</div>
-        <div class="metric-value" id="tickets-left">&#8212;</div>
-        <div class="metric-sublabel">concert s&#233;lectionn&#233;</div>
-      </div>
-    </div>
-
-    <!-- COMPARISON -->
-    <div class="comparison-section">
-      <div class="panel without-cache" id="panelNocache">
-        <div class="panel-header">
-          <div class="panel-title">Sans Cache</div>
-          <span class="panel-badge db">DB DIRECT</span>
-        </div>
-        <div class="panel-metric-label">Latence moyenne</div>
-        <div class="panel-metric-value" id="lat-nocache">&#8212;</div>
-        <div class="latency-bar"><div class="latency-bar-fill" id="bar-nocache" style="width:0%"></div></div>
-        <div class="panel-metric-label">P95 Latence</div>
-        <div class="panel-metric-value" id="p95-nocache" style="font-size:28px;">&#8212;</div>
-      </div>
-      <div class="panel with-cache" id="panelCache">
-        <div class="panel-header">
-          <div class="panel-title">Avec MicroCache</div>
-          <span class="panel-badge cache">CACHE</span>
-        </div>
-        <div class="panel-metric-label">Latence moyenne</div>
-        <div class="panel-metric-value" id="lat-cache">&#8212;</div>
-        <div class="latency-bar"><div class="latency-bar-fill" id="bar-cache" style="width:0%"></div></div>
-        <div class="panel-metric-label">P95 Latence</div>
-        <div class="panel-metric-value" id="p95-cache" style="font-size:28px;">&#8212;</div>
-      </div>
-    </div>
-
-    <!-- CHART -->
-    <div class="chart-section">
-      <div class="chart-section-header">
-        <div>
-          <div class="chart-section-title">Performances en temps r&#233;el</div>
-          <div class="chart-section-subtitle">Latence et hit rate sur les 60 derniers &#233;chantillons</div>
-        </div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot red"></div> Sans cache</div>
-          <div class="legend-item"><div class="legend-dot green"></div> MicroCache</div>
-        </div>
-      </div>
-      <div class="chart-body">
-        <div class="chart-container"><canvas id="latencyChart"></canvas></div>
-        <div class="gauge-container">
-          <div class="gauge-label">Cache Hit Rate</div>
-          <div class="gauge-wrapper">
-            <canvas class="gauge-canvas" id="gaugeChart"></canvas>
-            <div class="gauge-center">
-              <div class="gauge-value" id="gauge-value">0.0%</div>
-              <div class="gauge-sub">HIT</div>
+            <div class="ticket-bars-row">
+              <div class="ticket-bar"></div>
+              <div class="ticket-bar"></div>
+              <div class="ticket-bar"></div>
+              <div class="ticket-bar"></div>
+              <div class="ticket-bar"></div>
+              <div class="ticket-bar"></div>
+            </div>
+            <div class="ticket-perforations">
+              <span class="ticket-perf-num"
+                >A7 &middot; ROW 3 &middot; SEAT 12 &middot; GATE B</span
+              >
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- TRAFFIC -->
-    <div class="traffic-section">
-      <div class="traffic-header">
-        <div class="traffic-title">G&#233;n&#233;rateur de trafic</div>
-        <div class="traffic-subtitle">Simulez diff&#233;rents niveaux de charge sur la billetterie</div>
-      </div>
-      <div class="traffic-buttons">
-        <button class="traffic-btn btn-stop active" onclick="setTrafficMode('idle', event)">
-          <div class="traffic-btn-icon">&#9646;</div>
-          <div class="traffic-btn-body">
-            <div class="traffic-btn-label">Stop</div>
-            <div class="traffic-btn-sub">Trafic suspendu</div>
-          </div>
-        </button>
-        <button class="traffic-btn btn-normal" onclick="setTrafficMode('normal', event)">
-          <div class="traffic-btn-icon">&#9654;</div>
-          <div class="traffic-btn-body">
-            <div class="traffic-btn-label">Normal</div>
-            <div class="traffic-btn-sub">5 req / seconde</div>
-          </div>
-        </button>
-        <button class="traffic-btn btn-rush" onclick="setTrafficMode('rush', event)">
-          <div class="traffic-btn-icon">&#9889;</div>
-          <div class="traffic-btn-body">
-            <div class="traffic-btn-label">Afflux</div>
-            <div class="traffic-btn-sub">30 req / seconde</div>
-          </div>
-        </button>
-        <button class="traffic-btn btn-panic" onclick="setTrafficMode('panic', event)">
-          <div class="traffic-btn-icon">&#128680;</div>
-          <div class="traffic-btn-body">
-            <div class="traffic-btn-label">Panique</div>
-            <div class="traffic-btn-sub">60 req / seconde</div>
-          </div>
-        </button>
-      </div>
-    </div>
-
-    <!-- LOG -->
-    <div class="log-section">
-      <div class="log-header">
-        <div class="log-title">Journal des requ&#234;tes</div>
-        <div class="log-live-indicator"><div class="log-live-dot"></div> Live feed</div>
-      </div>
-      <div class="log-terminal">
-        <div class="log-terminal-bar">
-          <div class="terminal-dot red"></div>
-          <div class="terminal-dot yellow"></div>
-          <div class="terminal-dot green"></div>
-          <span class="terminal-title">microcache — request log</span>
+      <!-- METRICS -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Requêtes totales</div>
+          <div class="metric-value" id="total-requests">0</div>
+          <div class="metric-sublabel">depuis le lancement</div>
         </div>
-        <div class="log-entries" id="logEntries">
-          <div class="log-empty">En attente de requ&#234;tes...</div>
+        <div class="metric-card">
+          <div class="metric-label">Taux de hit</div>
+          <div class="metric-value" id="hit-rate">0.0%</div>
+          <div class="metric-sublabel">cache hit rate</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Gain de vitesse</div>
+          <div class="metric-value" id="speedup-factor">&#8212;</div>
+          <div class="metric-sublabel">times faster</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Places disponibles</div>
+          <div class="metric-value" id="tickets-left">&#8212;</div>
+          <div class="metric-sublabel">concert sélectionné;</div>
         </div>
       </div>
+
+      <!-- COMPARISON -->
+      <div class="comparison-section">
+        <div class="panel without-cache" id="panelNocache">
+          <div class="panel-header">
+            <div class="panel-title">Sans Cache</div>
+            <span class="panel-badge db">DB DIRECT</span>
+          </div>
+          <div class="panel-metric-label">Latence moyenne</div>
+          <div class="panel-metric-value" id="lat-nocache">&#8212;</div>
+          <div class="latency-bar">
+            <div
+              class="latency-bar-fill"
+              id="bar-nocache"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div class="panel-metric-label">P95 Latence</div>
+          <div
+            class="panel-metric-value"
+            id="p95-nocache"
+            style="font-size: 28px"
+          >
+            &#8212;
+          </div>
+        </div>
+        <div class="panel with-cache" id="panelCache">
+          <div class="panel-header">
+            <div class="panel-title">Avec MicroCache</div>
+            <span class="panel-badge cache">CACHE</span>
+          </div>
+          <div class="panel-metric-label">Latence moyenne</div>
+          <div class="panel-metric-value" id="lat-cache">&#8212;</div>
+          <div class="latency-bar">
+            <div
+              class="latency-bar-fill"
+              id="bar-cache"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div class="panel-metric-label">P95 Latence</div>
+          <div
+            class="panel-metric-value"
+            id="p95-cache"
+            style="font-size: 28px"
+          >
+            &#8212;
+          </div>
+        </div>
+      </div>
+
+      <!-- CHART -->
+      <div class="chart-section">
+        <div class="chart-section-header">
+          <div>
+            <div class="chart-section-title">Performances en temps réel</div>
+            <div class="chart-section-subtitle">
+              Latence et hit rate sur les 60 derniers échantillons
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot red"></div>
+              Sans cache
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot green"></div>
+              MicroCache
+            </div>
+          </div>
+        </div>
+        <div class="chart-body">
+          <div class="chart-container"><canvas id="latencyChart"></canvas></div>
+          <div class="gauge-container">
+            <div class="gauge-label">Cache Hit Rate</div>
+            <div class="gauge-wrapper">
+              <canvas class="gauge-canvas" id="gaugeChart"></canvas>
+              <div class="gauge-center">
+                <div class="gauge-value" id="gauge-value">0.0%</div>
+                <div class="gauge-sub">HIT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRAFFIC -->
+      <div class="traffic-section">
+        <div class="traffic-header">
+          <div class="traffic-title">Générateur de trafic</div>
+          <div class="traffic-subtitle">
+            Simulez différents niveaux de charge sur la billetterie
+          </div>
+        </div>
+        <div class="traffic-buttons">
+          <button
+            class="traffic-btn btn-stop active"
+            onclick="setTrafficMode('idle', event)"
+          >
+            <div class="traffic-btn-icon">&#9646;</div>
+            <div class="traffic-btn-body">
+              <div class="traffic-btn-label">Stop</div>
+              <div class="traffic-btn-sub">Trafic suspendu</div>
+            </div>
+          </button>
+          <button
+            class="traffic-btn btn-normal"
+            onclick="setTrafficMode('normal', event)"
+          >
+            <div class="traffic-btn-icon">&#9654;</div>
+            <div class="traffic-btn-body">
+              <div class="traffic-btn-label">Normal</div>
+              <div class="traffic-btn-sub">5 req / seconde</div>
+            </div>
+          </button>
+          <button
+            class="traffic-btn btn-rush"
+            onclick="setTrafficMode('rush', event)"
+          >
+            <div class="traffic-btn-icon">&#9889;</div>
+            <div class="traffic-btn-body">
+              <div class="traffic-btn-label">Afflux</div>
+              <div class="traffic-btn-sub">30 req / seconde</div>
+            </div>
+          </button>
+          <button
+            class="traffic-btn btn-panic"
+            onclick="setTrafficMode('panic', event)"
+          >
+            <div class="traffic-btn-icon">&#128680;</div>
+            <div class="traffic-btn-body">
+              <div class="traffic-btn-label">Panique</div>
+              <div class="traffic-btn-sub">60 req / seconde</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- LOG -->
+      <div class="log-section">
+        <div class="log-header">
+          <div class="log-title">Journal des requêtes</div>
+          <div class="log-live-indicator">
+            <div class="log-live-dot"></div>
+            Live feed
+          </div>
+        </div>
+        <div class="log-terminal">
+          <div class="log-terminal-bar">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+            <span class="terminal-title">microcache — request log</span>
+          </div>
+          <div class="log-entries" id="logEntries">
+            <div class="log-empty">En attente de requêtes...</div>
+          </div>
+        </div>
+      </div>
     </div>
+    <script>
+      const WS_URL = "ws://" + window.location.host + "/ws";
+      const MODES = {
+        idle: { rps: 0 },
+        normal: { rps: 5 },
+        rush: { rps: 30 },
+        panic: { rps: 60 },
+      };
+      const MAX_CHART_POINTS = 60;
+      const MAX_LOG_ENTRIES = 50;
 
-  </div>
-  <script>
-    const WS_URL = 'ws://' + window.location.host + '/ws';
-    const MODES  = { idle:{rps:0}, normal:{rps:5}, rush:{rps:30}, panic:{rps:60} };
-    const MAX_CHART_POINTS = 60;
-    const MAX_LOG_ENTRIES  = 50;
+      let ws = null,
+        reconnectTimer = null,
+        trafficInterval = null;
+      let currentMode = "idle",
+        concertId = 1;
+      let lineChart = null,
+        gaugeChart = null,
+        logEntries = [];
 
-    let ws=null, reconnectTimer=null, trafficInterval=null;
-    let currentMode='idle', concertId=1;
-    let lineChart=null, gaugeChart=null, logEntries=[];
+      function connect() {
+        try {
+          ws = new WebSocket(WS_URL);
+          ws.onopen = () => {
+            setStatus("connected");
+            clearTimeout(reconnectTimer);
+          };
+          ws.onclose = () => {
+            setStatus("disconnected");
+            reconnectTimer = setTimeout(connect, 3000);
+          };
+          ws.onerror = () => {
+            setStatus("error");
+          };
+          ws.onmessage = (e) => {
+            try {
+              const msg = JSON.parse(e.data);
+              if (msg.type === "metrics" || msg.type === "snapshot")
+                updateDashboard(msg.payload);
+            } catch (ex) {
+              console.error(ex);
+            }
+          };
+        } catch (ex) {
+          console.error(ex);
+          setStatus("error");
+        }
+      }
 
-    function connect() {
-      try {
-        ws = new WebSocket(WS_URL);
-        ws.onopen  = () => { setStatus('connected');    clearTimeout(reconnectTimer); };
-        ws.onclose = () => { setStatus('disconnected'); reconnectTimer = setTimeout(connect, 3000); };
-        ws.onerror = () => { setStatus('error'); };
-        ws.onmessage = (e) => {
-          try {
-            const msg = JSON.parse(e.data);
-            if (msg.type === 'metrics' || msg.type === 'snapshot') updateDashboard(msg.payload);
-          } catch(ex) { console.error(ex); }
-        };
-      } catch(ex) { console.error(ex); setStatus('error'); }
-    }
+      function setStatus(s) {
+        const dot = document.getElementById("statusDot"),
+          txt = document.getElementById("statusText");
+        if (s === "connected") {
+          dot.style.background = "#10b981";
+          txt.textContent = "LIVE";
+        } else if (s === "disconnected") {
+          dot.style.background = "#f59e0b";
+          txt.textContent = "Reconnexion\u2026";
+        } else {
+          dot.style.background = "#ef4444";
+          txt.textContent = "Erreur";
+        }
+      }
 
-    function setStatus(s) {
-      const dot=document.getElementById('statusDot'), txt=document.getElementById('statusText');
-      if      (s==='connected')    { dot.style.background='#10b981'; txt.textContent='LIVE'; }
-      else if (s==='disconnected') { dot.style.background='#f59e0b'; txt.textContent='Reconnexion\u2026'; }
-      else                         { dot.style.background='#ef4444'; txt.textContent='Erreur'; }
-    }
+      function updateDashboard(p) {
+        if (!p) return;
+        document.getElementById("total-requests").textContent = (
+          p.totalRequests || 0
+        ).toLocaleString("fr");
+        document.getElementById("hit-rate").textContent =
+          (p.hitRate || 0).toFixed(1) + "%";
+        document.getElementById("speedup-factor").textContent =
+          p.speedupFactor > 0 ? "\xd7" + p.speedupFactor : "\u2014";
+        const latNc = p.avgLatencyNocache || 0,
+          latC = p.avgLatencyCache || 0;
+        const p95Nc = p.p95LatencyNocache || 0,
+          p95C = p.p95LatencyCache || 0;
+        document.getElementById("lat-nocache").textContent = latNc + " ms";
+        document.getElementById("lat-cache").textContent = latC + " ms";
+        document.getElementById("p95-nocache").textContent = p95Nc + " ms";
+        document.getElementById("p95-cache").textContent = p95C + " ms";
+        document.getElementById("bar-nocache").style.width =
+          Math.min(100, (latNc / 500) * 100) + "%";
+        document.getElementById("bar-cache").style.width =
+          Math.min(100, (latC / 500) * 100) + "%";
+        const pnc = document.getElementById("panelNocache");
+        latNc > 200
+          ? pnc.classList.add("overloaded")
+          : pnc.classList.remove("overloaded");
+        pushToLineChart(latNc, latC);
+        updateGauge(p.hitRate || 0);
+        fetchTickets();
+      }
 
-    function updateDashboard(p) {
-      if (!p) return;
-      document.getElementById('total-requests').textContent = (p.totalRequests||0).toLocaleString('fr');
-      document.getElementById('hit-rate').textContent       = (p.hitRate||0).toFixed(1)+'%';
-      document.getElementById('speedup-factor').textContent = (p.speedupFactor>0) ? '\xd7'+p.speedupFactor : '\u2014';
-      const latNc=p.avgLatencyNocache||0, latC=p.avgLatencyCache||0;
-      const p95Nc=p.p95LatencyNocache||0, p95C=p.p95LatencyCache||0;
-      document.getElementById('lat-nocache').textContent  = latNc+' ms';
-      document.getElementById('lat-cache').textContent    = latC+' ms';
-      document.getElementById('p95-nocache').textContent  = p95Nc+' ms';
-      document.getElementById('p95-cache').textContent    = p95C+' ms';
-      document.getElementById('bar-nocache').style.width  = Math.min(100,(latNc/500)*100)+'%';
-      document.getElementById('bar-cache').style.width    = Math.min(100,(latC/500)*100)+'%';
-      const pnc=document.getElementById('panelNocache');
-      latNc>200 ? pnc.classList.add('overloaded') : pnc.classList.remove('overloaded');
-      pushToLineChart(latNc, latC);
-      updateGauge(p.hitRate||0);
-      fetchTickets();
-    }
-
-    function initLineChart() {
-      const ctx=document.getElementById('latencyChart').getContext('2d');
-      lineChart=new Chart(ctx,{
-        type:'line',
-        data:{
-          labels:Array(MAX_CHART_POINTS).fill(''),
-          datasets:[
-            { label:'Sans cache', data:Array(MAX_CHART_POINTS).fill(null),
-              borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.05)',
-              fill:true, tension:0.4, pointRadius:0, borderWidth:2 },
-            { label:'MicroCache', data:Array(MAX_CHART_POINTS).fill(null),
-              borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.05)',
-              fill:true, tension:0.4, pointRadius:0, borderWidth:2 }
-          ]
-        },
-        options:{
-          responsive:true, maintainAspectRatio:false, animation:false,
-          interaction:{mode:'index',intersect:false},
-          plugins:{
-            legend:{display:false},
-            tooltip:{ backgroundColor:'rgba(15,23,42,0.9)', padding:10, cornerRadius:8,
-              bodyFont:{size:12,weight:'600'} }
+      function initLineChart() {
+        const ctx = document.getElementById("latencyChart").getContext("2d");
+        lineChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: Array(MAX_CHART_POINTS).fill(""),
+            datasets: [
+              {
+                label: "Sans cache",
+                data: Array(MAX_CHART_POINTS).fill(null),
+                borderColor: "#ef4444",
+                backgroundColor: "rgba(239,68,68,0.05)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 2,
+              },
+              {
+                label: "MicroCache",
+                data: Array(MAX_CHART_POINTS).fill(null),
+                borderColor: "#10b981",
+                backgroundColor: "rgba(16,185,129,0.05)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 2,
+              },
+            ],
           },
-          scales:{
-            y:{ beginAtZero:true, max:200,
-                ticks:{font:{size:11},color:'#9ca3af',callback:v=>v+' ms'},
-                grid:{color:'rgba(0,0,0,0.04)'}, border:{display:false} },
-            x:{ display:false }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: "rgba(15,23,42,0.9)",
+                padding: 10,
+                cornerRadius: 8,
+                bodyFont: { size: 12, weight: "600" },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 200,
+                ticks: {
+                  font: { size: 11 },
+                  color: "#9ca3af",
+                  callback: (v) => v + " ms",
+                },
+                grid: { color: "rgba(0,0,0,0.04)" },
+                border: { display: false },
+              },
+              x: { display: false },
+            },
+          },
+        });
+      }
+
+      function pushToLineChart(latNc, latC) {
+        if (!lineChart) return;
+        lineChart.data.datasets[0].data.push(latNc);
+        lineChart.data.datasets[0].data.shift();
+        lineChart.data.datasets[1].data.push(latC);
+        lineChart.data.datasets[1].data.shift();
+        lineChart.update("none");
+      }
+
+      function initGauge() {
+        const ctx = document.getElementById("gaugeChart").getContext("2d");
+        gaugeChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            datasets: [
+              {
+                data: [0, 100],
+                backgroundColor: ["#10b981", "#f3f4f6"],
+                borderWidth: 0,
+                hoverOffset: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: false,
+            cutout: "76%",
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false },
+            },
+            animation: { duration: 400 },
+          },
+        });
+      }
+
+      function updateGauge(v) {
+        if (!gaugeChart) return;
+        const pct = Math.max(0, Math.min(100, v));
+        gaugeChart.data.datasets[0].data = [pct, 100 - pct];
+        gaugeChart.update();
+        document.getElementById("gauge-value").textContent = v.toFixed(1) + "%";
+      }
+
+      function setTrafficMode(mode, evt) {
+        clearInterval(trafficInterval);
+        currentMode = mode;
+        document
+          .querySelectorAll(".traffic-btn")
+          .forEach((b) => b.classList.remove("active"));
+        if (evt && evt.target) evt.target.classList.add("active");
+        const { rps } = MODES[mode];
+        if (rps === 0) return;
+        trafficInterval = setInterval(
+          () => {
+            fetch("/api/tickets?concertId=" + concertId)
+              .then((r) => r.json())
+              .then((d) => logReq(d, "cache"))
+              .catch(() => {});
+            fetch("/api/tickets/nocache?concertId=" + concertId)
+              .then((r) => r.json())
+              .then((d) => logReq(d, "nocache"))
+              .catch(() => {});
+          },
+          Math.round(1000 / rps),
+        );
+      }
+
+      function logReq(data, type) {
+        if (!data.success) return;
+        const time = new Date().toLocaleTimeString("fr", { hour12: false });
+        const lat = data.meta.latencyMs,
+          src = data.data.source;
+        let bc = "db",
+          bt = "DB";
+        if (type === "cache") {
+          if (src === "cache") {
+            bc = "hit";
+            bt = "HIT";
+          } else {
+            bc = "miss";
+            bt = "MISS";
           }
         }
-      });
-    }
-
-    function pushToLineChart(latNc, latC) {
-      if (!lineChart) return;
-      lineChart.data.datasets[0].data.push(latNc); lineChart.data.datasets[0].data.shift();
-      lineChart.data.datasets[1].data.push(latC);  lineChart.data.datasets[1].data.shift();
-      lineChart.update('none');
-    }
-
-    function initGauge() {
-      const ctx=document.getElementById('gaugeChart').getContext('2d');
-      gaugeChart=new Chart(ctx,{
-        type:'doughnut',
-        data:{ datasets:[{ data:[0,100], backgroundColor:['#10b981','#f3f4f6'], borderWidth:0, hoverOffset:0 }] },
-        options:{ responsive:false, cutout:'76%',
-          plugins:{ legend:{display:false}, tooltip:{enabled:false} },
-          animation:{duration:400} }
-      });
-    }
-
-    function updateGauge(v) {
-      if (!gaugeChart) return;
-      const pct=Math.max(0,Math.min(100,v));
-      gaugeChart.data.datasets[0].data=[pct,100-pct];
-      gaugeChart.update();
-      document.getElementById('gauge-value').textContent=v.toFixed(1)+'%';
-    }
-
-    function setTrafficMode(mode, evt) {
-      clearInterval(trafficInterval);
-      currentMode=mode;
-      document.querySelectorAll('.traffic-btn').forEach(b=>b.classList.remove('active'));
-      if (evt&&evt.target) evt.target.classList.add('active');
-      const {rps}=MODES[mode];
-      if (rps===0) return;
-      trafficInterval=setInterval(()=>{
-        fetch('/api/tickets?concertId='+concertId)
-          .then(r=>r.json()).then(d=>logReq(d,'cache')).catch(()=>{});
-        fetch('/api/tickets/nocache?concertId='+concertId)
-          .then(r=>r.json()).then(d=>logReq(d,'nocache')).catch(()=>{});
-      }, Math.round(1000/rps));
-    }
-
-    function logReq(data, type) {
-      if (!data.success) return;
-      const time=new Date().toLocaleTimeString('fr',{hour12:false});
-      const lat=data.meta.latencyMs, src=data.data.source;
-      let bc='db', bt='DB';
-      if (type==='cache') { if(src==='cache'){bc='hit';bt='HIT';}else{bc='miss';bt='MISS';} }
-      const latClass = lat < 80 ? 'fast' : lat < 160 ? 'slow' : 'very-slow';
-      logEntries.unshift(`<div class="log-entry">
+        const latClass = lat < 80 ? "fast" : lat < 160 ? "slow" : "very-slow";
+        logEntries.unshift(`<div class="log-entry">
         <span class="log-time">${time}</span>
         <span class="log-badge ${bc}">${bt}</span>
         <span class="log-prompt">&#62;</span>
         <span class="log-text"><span class="log-key">concert</span><span class="log-colon">:</span><span class="log-val">${data.data.concertId}</span><span class="log-colon">:seats</span></span>
         <span class="log-latency ${latClass}">${lat}ms</span>
       </div>`);
-      if (logEntries.length>MAX_LOG_ENTRIES) logEntries.pop();
-      document.getElementById('logEntries').innerHTML=logEntries.join('');
-    }
+        if (logEntries.length > MAX_LOG_ENTRIES) logEntries.pop();
+        document.getElementById("logEntries").innerHTML = logEntries.join("");
+      }
 
-    function fetchTickets() {
-      fetch('/api/concerts').then(r=>r.json()).then(data=>{
-        if (data.success&&data.data.length>0) {
-          const c=data.data.find(x=>x.id===parseInt(concertId));
-          if (c) document.getElementById('tickets-left').textContent=c.available_seats.toLocaleString('fr');
-        }
-      }).catch(()=>{});
-    }
+      function fetchTickets() {
+        fetch("/api/concerts")
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.success && data.data.length > 0) {
+              const c = data.data.find((x) => x.id === parseInt(concertId));
+              if (c)
+                document.getElementById("tickets-left").textContent =
+                  c.available_seats.toLocaleString("fr");
+            }
+          })
+          .catch(() => {});
+      }
 
-    document.getElementById('concertSelect').addEventListener('change',e=>{
-      concertId=e.target.value; fetchTickets();
-    });
+      document
+        .getElementById("concertSelect")
+        .addEventListener("change", (e) => {
+          concertId = e.target.value;
+          fetchTickets();
+        });
 
-    document.addEventListener('DOMContentLoaded',()=>{
-      initLineChart(); initGauge(); connect(); fetchTickets();
-    });
-  </script>
-</body>
+      document.addEventListener("DOMContentLoaded", () => {
+        initLineChart();
+        initGauge();
+        connect();
+        fetchTickets();
+      });
+    </script>
+  </body>
 </html>
