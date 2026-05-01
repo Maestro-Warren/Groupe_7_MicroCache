@@ -4,12 +4,13 @@
   "description": "API de démonstration MicroCache — billetterie concert",
   "main": "src/index.js",
   "scripts": {
-    "start": "node --experimental-sqlite src/index.js",
-    "dev": "node --experimental-sqlite --watch src/index.js"
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "ws": "^8.16.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "better-sqlite3": "^11.0.0"
   }
 }

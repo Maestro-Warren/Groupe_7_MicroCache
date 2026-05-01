@@ -147,7 +147,7 @@ async fn handle_client(stream: TcpStream, store: SharedStore) -> io::Result<()> 
 /// En cas d'empoisonnement du verrou interne, retourne `ERR internal lock error`.
 fn execute_command(command: Command, store: &SharedStore) -> String {
     match command {
-        Command::Ping => "PONG\n".to_string(),
+        Command::Ping => "+PONG\r\n".to_string(),
         Command::Set {
             key,
             value,
@@ -157,50 +157,50 @@ fn execute_command(command: Command, store: &SharedStore) -> String {
             match store.write() {
                 Ok(mut guard) => {
                     guard.set(key, value, ttl);
-                    "OK\n".to_string()
+                    "+OK\r\n".to_string()
                 }
-                Err(_) => "ERR internal lock error\n".to_string(),
+                Err(_) => "-ERR internal lock error\r\n".to_string(),
             }
         }
         Command::Get { key } => match store.read() {
             Ok(guard) => match guard.get(&key) {
                 Some(value) => {
                     let value_text = String::from_utf8_lossy(&value);
-                    format!("{}\n", value_text)
+                    format!("{}\r\n", value_text)
                 }
-                None => "NIL\n".to_string(),
+                None => "NIL\r\n".to_string(),
             },
-            Err(_) => "ERR internal lock error\n".to_string(),
+            Err(_) => "-ERR internal lock error\r\n".to_string(),
         },
         Command::Del { key } => match store.write() {
             Ok(mut guard) => {
                 let deleted = guard.delete(&key);
-                format!("{}\n", if deleted { 1 } else { 0 })
+                format!(":{}\r\n", if deleted { 1 } else { 0 })
             }
-            Err(_) => "ERR internal lock error\n".to_string(),
+            Err(_) => "-ERR internal lock error\r\n".to_string(),
         },
         Command::Keys { pattern } => match store.read() {
             Ok(guard) => {
                 let keys = guard.keys(&pattern);
                 if keys.is_empty() {
-                    "\n".to_string()
+                    "\r\n".to_string()
                 } else {
-                    format!("{}\n", keys.join(" "))
+                    format!("{}\r\n", keys.join(" "))
                 }
             }
-            Err(_) => "ERR internal lock error\n".to_string(),
+            Err(_) => "-ERR internal lock error\r\n".to_string(),
         },
         Command::Exists { key } => match store.read() {
-            Ok(guard) => format!("{}\n", if guard.exists(&key) { 1 } else { 0 }),
-            Err(_) => "ERR internal lock error\n".to_string(),
+            Ok(guard) => format!(":{}\r\n", if guard.exists(&key) { 1 } else { 0 }),
+            Err(_) => "-ERR internal lock error\r\n".to_string(),
         },
-        Command::Ttl { key } => match store.read() {
+        Command::Ttl { key } => match store.read() { 
             Ok(guard) => match guard.ttl(&key) {
-                TtlResult::Missing => "-2\n".to_string(),
-                TtlResult::NoExpiry => "-1\n".to_string(),
-                TtlResult::ExpiresIn(ttl) => format!("{}\n", ttl.as_secs()),
+                TtlResult::Missing => ":-2\r\n".to_string(),
+                TtlResult::NoExpiry => ":-1\r\n".to_string(),
+                TtlResult::ExpiresIn(ttl) => format!(":{}\r\n", ttl.as_secs()),
             },
-            Err(_) => "ERR internal lock error\n".to_string(),
+            Err(_) => "-ERR internal lock error\r\n".to_string(),
         },
     }
 }

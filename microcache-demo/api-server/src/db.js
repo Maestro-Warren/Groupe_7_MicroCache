@@ -1,13 +1,12 @@
-const { DatabaseSync } = require('node:sqlite');
+const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
 /**
- * Couche d'accès à la base de données SQLite (node:sqlite API expérimentale)
+ * Couche d'accès à la base de données SQLite (better-sqlite3)
  * Simule une vraie BD sous charge avec latence réaliste
  * 
- * Note: node:sqlite est synchrone (comme better-sqlite3)
- * Zéro dépendance externe, API native Node 23+
+ * Note: better-sqlite3 est synchrone et compatible avec Node.js 20+
  */
 
 const SEED_CONCERTS = [
@@ -33,7 +32,7 @@ function initDatabase() {
   }
 
   // Ouvrir la connexion SQLite
-  const db = new DatabaseSync(dbPath);
+  const db = new Database(dbPath);
 
   // Créer la table concerts
   db.exec(`
