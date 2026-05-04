@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test ApexCharts + Flowbite - MicroCache</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #111827;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      margin-bottom: 30px;
+      color: #111827;
+      text-align: center;
+    }
+    
+    .test-section {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    }
+    
+    .test-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #374151;
+    }
+    
+    .chart-wrapper {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    
+    .chart-item {
+      flex: 1;
+      min-width: 400px;
+    }
+    
+    .status {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+    
+    .status.error {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fca5a5;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #10b981;
+      color: white;
+    }
+    
+    button:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    
+    button.secondary {
+      background: #6b7280;
+    }
+    
+    button.secondary:hover {
+      background: #4b5563;
+    }
+    
+    .data-display {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #374151;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    
+    @media (max-width: 768px) {
+      .chart-item {
+        min-width: 100%;
+      }
+      
+      .chart-wrapper {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Test ApexCharts + Flowbite Integration</h1>
+    
+    <!-- Test 1: Line Chart -->
+    <div class="test-section">
+      <div class="test-title">✓ Test 1: Line Chart - Latence temps réel</div>
+      <div id="latencyChart" style="width: 100%;"></div>
+      <div class="controls">
+        <button onclick="addLatencyData()">Ajouter données</button>
+        <button onclick="resetLatencyChart()" class="secondary">Réinitialiser</button>
+      </div>
+      <div class="data-display" id="latencyData">En attente de données...</div>
+      <div id="latencyStatus" class="status success">✓ ApexCharts Line Chart chargé avec succès</div>
+    </div>
+    
+    <!-- Test 2: Gauge Chart -->
+    <div class="test-section">
+      <div class="test-title">✓ Test 2: Gauge Chart - Cache Hit Rate</div>
+      <div id="hitRateChart" style="width: 100%; height: 250px;"></div>
+      <div class="controls">
+        <button onclick="randomizeGauge()">Valeur aléatoire</button>
+        <button onclick="resetGauge()" class="secondary">Réinitialiser</button>
+      </div>
+      <div class="data-display" id="gaugeData">Hit Rate: 0%</div>
+      <div id="gaugeStatus" class="status success">✓ ApexCharts Gauge Chart chargé avec succès</div>
+    </div>
+    
+    <!-- Test 3: Responsive -->
+    <div class="test-section">
+      <div class="test-title">✓ Test 3: Responsive (redimensionnez la fenêtre)</div>
+      <p style="color: #6b7280; font-size: 13px; margin-bottom: 16px;">
+        Les graphiques se réadaptent automatiquement selon la taille de l'écran.
+        Breakpoints: Desktop (1024px), Tablet (768px), Mobile (&lt;768px)
+      </p>
+      <div id="responsiveChart" style="width: 100%;"></div>
+      <div id="responsiveStatus" class="status success">✓ Responsive mode activé - Redimensionnez pour tester</div>
+    </div>
+    
+    <!-- Test 4: Live Data Simulation -->
+    <div class="test-section">
+      <div class="test-title">✓ Test 4: Simulation temps réel (WebSocket simulé)</div>
+      <div class="chart-wrapper">
+        <div class="chart-item">
+          <div id="liveLatencyChart" style="width: 100%;"></div>
+        </div>
+        <div class="chart-item">
+          <div id="liveGaugeChart" style="width: 100%; height: 250px;"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="liveToggle" onclick="toggleLiveData()">Démarrer simulation</button>
+      </div>
+      <div class="data-display" id="liveData">Prêt à démarrer la simulation...</div>
+      <div id="liveStatus" class="status success">✓ Simulation temps réel configurée</div>
+    </div>
+  </div>
+
+  <script>
+    const MAX_CHART_POINTS = 60;
+    let lineChart = null, gaugeChart = null, responsiveChart = null;
+    let liveLineChart = null, liveGaugeChart = null;
+    let liveInterval = null;
+    let latencyData = { nocache: [], cache: [] };
+    let liveLatencyData = { nocache: [], cache: [] };
+    let hitRate = 0;
+
+    // ============ Test 1: Line Chart ============
+    function initLineChart() {
+      const options = {
+        chart: {
+          type: 'line',
+          height: 300,
+          sparkline: { enabled: false },
+          toolbar: { show: true },
+          animations: { enabled: true, speed: 300 },
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif'
+        },
+        stroke: {
+          curve: 'smooth',
+          width: [2, 2],
+          lineCap: 'round'
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.45,
+            opacityTo: 0.05,
+            stops: [0, 100]
+          }
+        },
+        series: [
+          { name: 'Sans cache', data: Array(MAX_CHART_POINTS).fill(0) },
+          { name: 'MicroCache', data: Array(MAX_CHART_POINTS).fill(0) }
+        ],
+        colors: ['#ef4444', '#10b981'],
+        xaxis: {
+          type: 'category',
+          categories: Array(MAX_CHART_POINTS).fill(''),
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+          labels: { show: false }
+        },
+        yaxis: {
+          title: { text: '' },
+          min: 0,
+          max: 200,
+          labels: {
+            formatter: v => Math.round(v) + ' ms',
+            style: { fontSize: '11px', colors: '#9ca3af' }
+          }
+        },
+        grid: {
+          show: true,
+          borderColor: 'rgba(156,163,175,0.2)',
+          xaxis: { lines: { show: false } },
+          yaxis: { lines: { show: true } }
+        },
+        tooltip: {
+          theme: 'dark',
+          x: { show: false },
+          y: { formatter: v => Math.round(v) + ' ms' }
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'right',
+          labels: { colors: '#374151' },
+          markers: { size: 6, shape: 'circle' }
+        },
+        responsive: [
+          { breakpoint: 1024, options: { chart: { height: 250 } } },
+          { breakpoint: 768, options: { chart: { height: 220 } } }
+        ]
+      };
+      
+      latencyData.nocache = Array(MAX_CHART_POINTS).fill(0);
+      latencyData.cache = Array(MAX_CHART_POINTS).fill(0);
+      
+      lineChart = new ApexCharts(document.getElementById('latencyChart'), options);
+      lineChart.render();
+    }
+
+    function addLatencyData() {
+      const nc = Math.random() * 150 + 50;
+      const c = Math.random() * 50 + 20;
+      
+      latencyData.nocache.push(nc);
+      if (latencyData.nocache.length > MAX_CHART_POINTS) latencyData.nocache.shift();
+      
+      latencyData.cache.push(c);
+      if (latencyData.cache.length > MAX_CHART_POINTS) latencyData.cache.shift();
+      
+      lineChart.updateSeries([
+        { data: latencyData.nocache },
+        { data: latencyData.cache }
+      ]);
+      
+      document.getElementById('latencyData').innerHTML = 
+        `Sans cache: ${nc.toFixed(1)}ms<br>MicroCache: ${c.toFixed(1)}ms<br>Points: ${latencyData.nocache.length}/${MAX_CHART_POINTS}`;
+    }
+
+    function resetLatencyChart() {
+      latencyData.nocache = Array(MAX_CHART_POINTS).fill(0);
+      latencyData.cache = Array(MAX_CHART_POINTS).fill(0);
+      lineChart.updateSeries([
+        { data: latencyData.nocache },
+        { data: latencyData.cache }
+      ]);
+      document.getElementById('latencyData').innerHTML = 'Réinitialisé';
+    }
+
+    // ============ Test 2: Gauge Chart ============
+    function initGaugeChart() {
+      const gaugeOptions = {
+        chart: {
+          type: 'radialBar',
+          height: 250,
+          sparkline: { enabled: false },
+          toolbar: { show: true },
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif'
+        },
+        plotOptions: {
+          radialBar: {
+            hollow: { size: '65%' },
+            dataLabels: { show: false },
+            track: { background: '#f3f4f6', strokeWidth: '0%' }
+          }
+        },
+        series: [0],
+        colors: ['#10b981'],
+        stroke: { lineCap: 'round' },
+        labels: ['Hit Rate'],
+        tooltip: {
+          theme: 'dark',
+          y: { formatter: v => v.toFixed(1) + '%' }
+        },
+        responsive: [
+          { breakpoint: 1024, options: { chart: { height: 230 } } }
+        ]
+      };
+      
+      gaugeChart = new ApexCharts(document.getElementById('hitRateChart'), gaugeOptions);
+      gaugeChart.render();
+    }
+
+    function randomizeGauge() {
+      hitRate = Math.random() * 100;
+      gaugeChart.updateSeries([hitRate]);
+      document.getElementById('gaugeData').innerHTML = `Hit Rate: ${hitRate.toFixed(1)}%`;
+    }
+
+    function resetGauge() {
+      hitRate = 0;
+      gaugeChart.updateSeries([0]);
+      document.getElementById('gaugeData').innerHTML = 'Hit Rate: 0%';
+    }
+
+    // ============ Test 3: Responsive ============
+    function initResponsiveChart() {
+      const data = [];
+      for (let i = 0; i < 12; i++) {
+        data.push({ x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'][i % 6], y: Math.random() * 100 });
+      }
+      
+      const options = {
+        chart: {
+          type: 'area',
+          height: 300,
+          toolbar: { show: false },
+          animations: { enabled: true, speed: 400 }
+        },
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.1 } },
+        series: [{ name: 'Performance', data: Array(60).fill(0).map(() => Math.random() * 100) }],
+        colors: ['#3b82f6'],
+        tooltip: { theme: 'dark' },
+        responsive: [
+          { breakpoint: 1024, options: { chart: { height: 250 } } },
+          { breakpoint: 768, options: { chart: { height: 220 } } }
+        ]
+      };
+      
+      responsiveChart = new ApexCharts(document.getElementById('responsiveChart'), options);
+      responsiveChart.render();
+    }
+
+    // ============ Test 4: Live Simulation ============
+    function initLiveCharts() {
+      const liveOptions = {
+        chart: {
+          type: 'line',
+          height: 250,
+          sparkline: { enabled: false },
+          toolbar: { show: false },
+          animations: { enabled: true, speed: 300 }
+        },
+        stroke: { curve: 'smooth', width: [2, 2] },
+        fill: { type: 'gradient', gradient: { opacityFrom: 0.45, opacityTo: 0.05 } },
+        series: [
+          { name: 'Sans cache', data: Array(MAX_CHART_POINTS).fill(0) },
+          { name: 'MicroCache', data: Array(MAX_CHART_POINTS).fill(0) }
+        ],
+        colors: ['#ef4444', '#10b981'],
+        xaxis: { axisBorder: { show: false }, axisTicks: { show: false }, labels: { show: false } },
+        yaxis: { min: 0, max: 200, labels: { formatter: v => Math.round(v) + ' ms' } },
+        grid: { show: true, borderColor: 'rgba(156,163,175,0.2)' },
+        tooltip: { theme: 'dark', x: { show: false }, y: { formatter: v => Math.round(v) + ' ms' } },
+        legend: { position: 'top', horizontalAlign: 'right' }
+      };
+      
+      liveLineChart = new ApexCharts(document.getElementById('liveLatencyChart'), liveOptions);
+      liveLineChart.render();
+      
+      const liveGaugeOptions = {
+        chart: { type: 'radialBar', height: 250, toolbar: { show: false } },
+        plotOptions: { radialBar: { hollow: { size: '65%' }, dataLabels: { show: false } } },
+        series: [0],
+        colors: ['#10b981'],
+        labels: ['Hit Rate']
+      };
+      
+      liveGaugeChart = new ApexCharts(document.getElementById('liveGaugeChart'), liveGaugeOptions);
+      liveGaugeChart.render();
+    }
+
+    function toggleLiveData() {
+      const btn = document.getElementById('liveToggle');
+      if (liveInterval) {
+        clearInterval(liveInterval);
+        liveInterval = null;
+        btn.textContent = 'Démarrer simulation';
+      } else {
+        btn.textContent = 'Arrêter simulation';
+        let count = 0;
+        liveInterval = setInterval(() => {
+          const nc = Math.random() * 150 + 50;
+          const c = Math.random() * 50 + 20;
+          const hr = Math.random() * 100;
+          
+          liveLatencyData.nocache.push(nc);
+          liveLatencyData.cache.push(c);
+          
+          if (liveLatencyData.nocache.length > MAX_CHART_POINTS) liveLatencyData.nocache.shift();
+          if (liveLatencyData.cache.length > MAX_CHART_POINTS) liveLatencyData.cache.shift();
+          
+          liveLineChart.updateSeries([
+            { data: liveLatencyData.nocache },
+            { data: liveLatencyData.cache }
+          ]);
+          
+          liveGaugeChart.updateSeries([hr]);
+          
+          document.getElementById('liveData').innerHTML = 
+            `Requête #${++count}<br>Sans cache: ${nc.toFixed(1)}ms | MicroCache: ${c.toFixed(1)}ms | Hit Rate: ${hr.toFixed(1)}%`;
+        }, 500);
+      }
+    }
+
+    // Initialize all on load
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        initLineChart();
+        initGaugeChart();
+        initResponsiveChart();
+        initLiveCharts();
+        console.log('✓ Tous les tests initialisés avec succès');
+      } catch (error) {
+        console.error('✗ Erreur lors de l\'initialisation:', error);
+        document.querySelectorAll('.status').forEach(s => {
+          s.innerHTML = '✗ Erreur: ' + error.message;
+          s.className = 'status error';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
