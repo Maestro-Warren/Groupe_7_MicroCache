@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Équipe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: #0f172a; color: #e2e8f0; scroll-behavior: smooth; }
+        .hero-bg { background: radial-gradient(circle at top, rgba(96,165,250,0.18), transparent 40%), radial-gradient(circle at bottom right, rgba(168,85,247,0.12), transparent 30%), #020617; }
+        .card-glow { box-shadow: 0 20px 50px rgba(59,130,246,0.12); }
+        .fade-up { animation: fadeUp 0.9s ease both; }
+        .pulse-border { animation: pulseBorder 2.8s ease-in-out infinite; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseBorder { 0%,100% { box-shadow: 0 0 0 0 rgba(56,189,248,0.25); } 50% { box-shadow: 0 0 0 18px rgba(56,189,248,0); } }
+    </style>
+</head>
+<body>
+    <header class="hero-bg py-12">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div class="max-w-2xl fade-up">
+                    <p class="text-sm uppercase tracking-[0.4em] text-cyan-300">Groupe 7 — Projet MicroCache</p>
+                    <h1 class="mt-4 text-5xl font-bold text-white tracking-tight">Membres de l’équipe</h1>
+                    <p class="mt-4 text-lg text-slate-300">Présentation complète des membres, des rôles et des contributions sur le projet de cache distribué pour billetterie concert.</p>
+                </div>
+                <div class="space-x-3">
+                    <a href="index.html" class="inline-flex items-center justify-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-400">Accueil</a>
+                    <a href="projet.html" class="inline-flex items-center justify-center rounded-full border border-cyan-500 px-6 py-3 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-600/10">Détails Projet</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 lg:px-12 py-12">
+        <section class="mb-12">
+            <div class="grid gap-6 lg:grid-cols-2">
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400 text-cyan-300">KB</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">KAJE BOUKEM Warren</h2>
+                            <p class="text-sm text-slate-400">24G01094 — Lead Architecte & Développeur Rust</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">Responsable de la conception du serveur MicroCache, du store thread-safe et du reaper TTL. A piloté l’architecture asynchrone avec Tokio et la persistence binaire.</p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.1s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400 text-cyan-300">FD</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">FOKAM DE LOKA Wilfried</h2>
+                            <p class="text-sm text-slate-400">22G00138 — Lead Frontend & Dashboard</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">A conçu l’interface Dashboard, les animations, et la communication WebSocket pour le suivi des métriques en temps réel. A veillé à l'UX visuelle et aux vues comparatives.</p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.2s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-400 text-emerald-300">BS</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">BESSAWA Steeve-James</h2>
+                            <p class="text-sm text-slate-400">22G00049 — API & Backend</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">Responsable de l’API Express, des routes de billetterie et de l’intégration cache-aside. A construit la logique de comparaison sans cache vs cache et le middleware de performance.</p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.3s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-400 text-emerald-300">DD</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">DJIFACK Daril</h2>
+                            <p class="text-sm text-slate-400">22G00438 — Tests & Qualité</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">A développé les scripts de test de charge et les scénarios de bench. A mesuré les gains de performance et assuré la stabilité dans les différents régimes de trafic.</p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.4s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-violet-400 text-violet-300">RD</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">RIKEM DI BELL Sheila</h2>
+                            <p class="text-sm text-slate-400">24G01128 — Data & Documentation</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">Rédaction de la documentation, synthèse des métriques et structuration de la présentation projet. A garanti la cohérence des livrables et des exigences de l'architecture.</p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.5s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-violet-400 text-violet-300">ME</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">MOHAMMED EL BACHIR Ismaïla</h2>
+                            <p class="text-sm text-slate-400">22G00262 — Sécurité & Scénarios</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">Analyse des exigences de sécurité et des scénarios de charge. A assuré les tests de résilience et la robustesse du protocole de communication TCP.
+                    </p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.6s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-amber-400 text-amber-300">KE</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">KOUTA Eric</h2>
+                            <p class="text-sm text-slate-400">24G01097 — Infrastructure & Build</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">Gestion de la compilation Rust, de la configuration du projet et de la livraison. A optimisé le workflow de build et assuré l’intégration du backend Node.js avec les composants Rust.</p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.7s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-amber-400 text-amber-300">NY</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">NGAMBI YPECHEUN W. de Destino</h2>
+                            <p class="text-sm text-slate-400">22G00303 — UX & Animation</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">Conception des animations visuelles et de la navigation multi-page. A travaillé sur l’expérience utilisateur pour rendre la documentation plus immersive.</p>
+                </article>
+                <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up" style="animation-delay:0.8s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-rose-400 text-rose-300">NB</div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">NTAKEU BAPIAH L.Y. Wendy</h2>
+                            <p class="text-sm text-slate-400">22G00339 — Support & Testing</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300">En charge du support de test fonctionnel, de la validation des endpoints et de la qualité globale du projet. A vérifié la cohérence des données dans les différents modules.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-8 card-glow fade-up">
+            <h2 class="text-3xl font-semibold text-white mb-5">Structure du travail en équipe</h2>
+            <div class="space-y-4 text-slate-300">
+                <p>Le projet MicroCache a été développé en mode collaboratif avec des livrables clairs :</p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Analyse et conception</strong> : définition des exigences, protocole texte, TTL et persistence.</li>
+                    <li><strong>Développement Rust</strong> : implémentation du serveur TCP, du store concurrent, des snapshots et du reaper.</li>
+                    <li><strong>API Node.js</strong> : routage, cache-aside, instrumentation métrique et intégration SQLite.</li>
+                    <li><strong>Dashboard</strong> : interface temps réel, graphiques, mais aussi expérience utilisateur et animation.</li>
+                    <li><strong>Documentation</strong> : rédaction de la documentation, présentation et uniformisation du style.</li>
+                </ul>
+                <p>Chaque membre a apporté ses compétences spécifiques pour assurer une architecture robuste, une performance optimale et une excellente qualité de présentation.</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

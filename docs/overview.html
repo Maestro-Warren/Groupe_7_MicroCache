@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Vue d'ensemble</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: #f8fafc; color: #0f172a; scroll-behavior: smooth; }
+        .hero-bg { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 35%), radial-gradient(circle at bottom right, rgba(168,85,247,0.18), transparent 30%), #eef2ff; }
+        .card-shadow { box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
+        .fade-in { animation: fadeIn 0.9s ease both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-semibold text-slate-800">MicroCache</a>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                <a href="overview.html" class="font-medium text-blue-600">Vue d'ensemble</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="features.html">Fonctionnalités</a>
+                <a href="setup.html">Installation</a>
+                <a href="usage.html">Utilisation</a>
+                <a href="api.html">API</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="testing.html">Tests</a>
+                <a href="team.html">Équipe</a>
+                <a href="projet.html">Projet</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-bg py-20">
+        <div class="container mx-auto px-6 text-center fade-in">
+            <p class="text-sm uppercase tracking-[0.45em] text-blue-600">Documentation détaillée</p>
+            <h1 class="mt-6 text-5xl font-bold text-slate-900">Vue d'ensemble du projet MicroCache</h1>
+            <p class="mt-6 text-lg leading-8 text-slate-600 max-w-3xl mx-auto">Une présentation complète du projet MicroCache : objectifs, architecture globale, composants et gains attendus dans un contexte de billetterie à forte charge.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 space-y-12">
+        <section class="grid gap-8 lg:grid-cols-2">
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in">
+                <h2 class="text-3xl font-semibold text-slate-900 mb-4">Objectif principal</h2>
+                <p class="text-slate-600 leading-8">MicroCache vise à démontrer l’impact d’un cache distribué dans une application de billetterie concert. Le but est de réduire les accès directs à la base de données, d’accélérer les réponses et de maintenir une haute disponibilité en charge.</p>
+                <ul class="mt-6 space-y-3 text-slate-600">
+                    <li><strong>Cache en mémoire</strong> : stockage clé/valeur TCP avec support TTL.</li>
+                    <li><strong>API billetterie</strong> : route d’accès aux places et comparaison cache/non-cache.</li>
+                    <li><strong>Dashboard temps réel</strong> : métriques, hit rate et latence en direct.</li>
+                    <li><strong>Tests de charge</strong> : script de benchmark pour mesurer les gains.</li>
+                </ul>
+            </article>
+            <article class="rounded-3xl bg-slate-900 p-8 text-white card-shadow fade-in" style="animation-delay:0.1s;">
+                <h2 class="text-3xl font-semibold mb-4">Pourquoi un cache distribué ?</h2>
+                <p class="text-slate-200 leading-8">Dans les systèmes modernes, les accès à la base de données représentent souvent le goulot d'étranglement. Un cache distribué permet :</p>
+                <ul class="mt-6 space-y-3 text-slate-300">
+                    <li>de diminuer fortement la latence de réponse,</li>
+                    <li>d’augmenter le throughput,</li>
+                    <li>de décharger la base de données sous pic de trafic,</li>
+                    <li>de maintenir une expérience utilisateur fluide.</li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold text-slate-900 mb-4">Composants clés</h2>
+            <div class="grid gap-6 md:grid-cols-3">
+                <div class="rounded-3xl border border-slate-200 p-6">
+                    <h3 class="text-xl font-semibold mb-2">Serveur Rust</h3>
+                    <p class="text-slate-600 leading-7">Module principal qui gère les commandes TCP, le store concurrent et le nettoyage TTL.</p>
+                </div>
+                <div class="rounded-3xl border border-slate-200 p-6">
+                    <h3 class="text-xl font-semibold mb-2">API Node.js</h3>
+                    <p class="text-slate-600 leading-7">Interface entre le client HTTP et MicroCache, avec cache-aside et métriques temps réel.</p>
+                </div>
+                <div class="rounded-3xl border border-slate-200 p-6">
+                    <h3 class="text-xl font-semibold mb-2">Dashboard</h3>
+                    <p class="text-slate-600 leading-7">Visualisation en direct des performances, latence, hit rate et comparaison cache/non-cache.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold text-slate-900 mb-4">Flux de données</h2>
+            <div class="mermaid">
+                graph LR
+                    A[Client HTTP] --> B[API Backend]
+                    B -->|Cache-aside| C[MicroCache TCP]
+                    B -->|DB fallback| D[SQLite]
+                    C --> E[Rust MicroCache]</n                    E --> F[Store Thread-safe]
+                    E --> G[Reaper TTL]
+                    E --> H[Persistence Snapshots]
+            </div>
+            <p class="mt-6 text-slate-600 leading-7">Le backend API priorise le cache, puis interroge SQLite seulement si l’entrée est absente. La valeur est ensuite renvoyée au dashboard et au client.</p>
+        </section>
+    </main>
+</body>
+</html>

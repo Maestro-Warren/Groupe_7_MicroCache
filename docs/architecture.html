@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Architecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%); color: #0f172a; scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%); }
+        .card-shadow { box-shadow: 0 20px 50px rgba(15,23,42,0.1); }
+        .fade-in { animation: fadeIn 0.9s ease both; }
+        .gradient-card { background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,253,250,0.95) 100%); border: 1px solid rgba(16,185,129,0.1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-slate-100">
+        <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-semibold text-slate-900">MicroCache</a>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                <a href="overview.html">Vue d'ensemble</a>
+                <a href="architecture.html" class="font-medium text-blue-600">Architecture</a>
+                <a href="features.html">Fonctionnalités</a>
+                <a href="setup.html">Installation</a>
+                <a href="usage.html">Utilisation</a>
+                <a href="api.html">API</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="testing.html">Tests</a>
+                <a href="team.html">Équipe</a>
+                <a href="projet.html">Projet</a>
+            </div>
+        </div>
+    </nav>
+    <header class="hero-bg py-20 text-white">
+        <div class="container mx-auto px-6 text-center fade-in">
+            <p class="text-sm uppercase tracking-[0.45em] text-cyan-100">Architecture technique</p>
+            <h1 class="mt-6 text-5xl font-bold">Architecture détaillée de MicroCache</h1>
+            <p class="mt-6 text-lg leading-8 text-cyan-100 max-w-3xl mx-auto">Comprendre comment les différents modules interagissent : serveur Rust, API Node.js, cache-aside, persistence et dashboard.</p>
+        </div>
+    </header>
+    <main class="container mx-auto px-6 py-12 space-y-12">
+        <section class="rounded-3xl gradient-card p-10 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold text-slate-900 mb-4">Schéma des composants</h2>
+            <div class="mermaid">
+                graph LR
+                    A[Dashboard] -->|WebSocket| B[API Backend]
+                    B -->|Cache-aside| C[MicroCache TCP]
+                    B -->|DB fallback| D[SQLite]
+                    C --> E[Rust MicroCache]
+                    E --> F[Store Thread-safe]
+                    E --> G[Reaper TTL]
+                    E --> H[Persistence Snapshot]
+            </div>
+        </section>
+        <section class="grid gap-8 md:grid-cols-3">
+            <article class="rounded-3xl gradient-card p-8 card-shadow fade-in">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold">1</div>
+                    <h3 class="text-2xl font-semibold ml-4 text-slate-900">Serveur Rust</h3>
+                </div>
+                <p class="text-slate-600 leading-7">Gestion des connexions TCP, parsing des commandes, accès concurrent au store et expiration TTL. Construit sur Tokio pour des performances asynchrones.</p>
+            </article>
+            <article class="rounded-3xl gradient-card p-8 card-shadow fade-in" style="animation-delay:0.1s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold">2</div>
+                    <h3 class="text-2xl font-semibold ml-4 text-slate-900">API Node.js</h3>
+                </div>
+                <p class="text-slate-600 leading-7">Serveur Express avec endpoints de billetterie. Implémente le pattern cache-aside et capture des métriques pour le dashboard.</p>
+            </article>
+            <article class="rounded-3xl gradient-card p-8 card-shadow fade-in" style="animation-delay:0.2s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold">3</div>
+                    <h3 class="text-2xl font-semibold ml-4 text-slate-900">Dashboard</h3>
+                </div>
+                <p class="text-slate-600 leading-7">Interface utilisateur avec graphiques, statut WebSocket et journal des requêtes. Fournit une vue claire des performances en temps réel.</p>
+            </article>
+        </section>
+        <section class="rounded-3xl gradient-card p-10 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold text-slate-900 mb-4">Flux de requête détaillé</h2>
+            <div class="space-y-4">
+                <div class="flex gap-4 items-start">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 text-blue-600 font-semibold">1</div>
+                    </div>
+                    <div>
+                        <p class="text-slate-700 leading-7">L'utilisateur interroge l'API `/api/tickets?concertId=`.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-emerald-100 text-emerald-600 font-semibold">2</div>
+                    </div>
+                    <div>
+                        <p class="text-slate-700 leading-7">L'API demande la valeur au cache MicroCache via TCP.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-purple-100 text-purple-600 font-semibold">3</div>
+                    </div>
+                    <div>
+                        <p class="text-slate-700 leading-7">Si la clé existe, le cache renvoie la valeur rapidement.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-orange-100 text-orange-600 font-semibold">4</div>
+                    </div>
+                    <div>
+                        <p class="text-slate-700 leading-7">Sinon, l'API récupère la valeur depuis SQLite et met à jour le cache.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-10 w-10 rounded-full bg-red-100 text-red-600 font-semibold">5</div>
+                    </div>
+                    <div>
+                        <p class="text-slate-700 leading-7">Les métriques de latence et hit/miss sont envoyées au dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="grid gap-8 lg:grid-cols-2">
+            <article class="rounded-3xl gradient-card p-8 card-shadow fade-in">
+                <h3 class="text-2xl font-semibold text-slate-900 mb-4">Thread-safe store</h3>
+                <p class="text-slate-600 leading-7">Le store utilise des primitives de synchronisation pour autoriser plusieurs connexions simultanées tout en garantissant l'intégrité des données.</p>
+                <ul class="mt-4 space-y-2 text-slate-600">
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Accès concurrent sécurisé</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Intégrité des données garantie</span>
+                    </li>
+                </ul>
+            </article>
+            <article class="rounded-3xl gradient-card p-8 card-shadow fade-in" style="animation-delay:0.1s;">
+                <h3 class="text-2xl font-semibold text-slate-900 mb-4">Gestion TTL</h3>
+                <p class="text-slate-600 leading-7">Le reaper nettoie périodiquement les entrées expirées, ce qui évite la carburation de la mémoire et assure des lectures fraîches.</p>
+                <ul class="mt-4 space-y-2 text-slate-600">
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Expiration automatique des entrées</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Gestion mémoire optimisée</span>
+                    </li>
+                </ul>
+            </article>
+        </section>
+    </main>
+</body>
+</html>

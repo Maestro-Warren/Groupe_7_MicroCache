@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Fonctionnalités</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: #f1f5f9; color: #0f172a; scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #0ea5e9 0%, #7c3aed 100%); }
+        .card-shadow { box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
+        .fade-in { animation: fadeIn 0.9s ease both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-semibold text-slate-900">MicroCache</a>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                <a href="overview.html">Vue d'ensemble</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="features.html" class="font-medium text-blue-600">Fonctionnalités</a>
+                <a href="setup.html">Installation</a>
+                <a href="usage.html">Utilisation</a>
+                <a href="api.html">API</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="testing.html">Tests</a>
+            </div>
+        </div>
+    </nav>
+    <header class="hero-bg py-20 text-white">
+        <div class="container mx-auto px-6 text-center fade-in">
+            <p class="text-sm uppercase tracking-[0.45em] text-cyan-200">Caractéristiques</p>
+            <h1 class="mt-6 text-5xl font-bold">Fonctionnalités clés de MicroCache</h1>
+            <p class="mt-6 text-lg leading-8 text-cyan-100 max-w-3xl mx-auto">Découvrez toutes les capacités du projet, des performances aux métriques en passant par la persistance.</p>
+        </div>
+    </header>
+    <main class="container mx-auto px-6 py-12 space-y-12">
+        <section class="grid gap-6 lg:grid-cols-2">
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in">
+                <h2 class="text-3xl font-semibold mb-4">Performance</h2>
+                <p class="text-slate-600 leading-7">MicroCache apporte une réduction significative de latence grâce à son cache en mémoire et à l’architecture asynchrone.</p>
+                <ul class="mt-6 space-y-3 text-slate-600">
+                    <li>Réponses en quelques millisecondes pour les lectures cachées.</li>
+                    <li>Gain mesuré de ×22 de rapidité.</li>
+                    <li>Limiter les accès directs à SQLite sous charge.</li>
+                </ul>
+            </article>
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in" style="animation-delay:0.05s;">
+                <h2 class="text-3xl font-semibold mb-4">Scalabilité</h2>
+                <p class="text-slate-600 leading-7">Grâce à un serveur TCP asynchrone et un store thread-safe, MicroCache peut gérer plusieurs connexions concurrentes sans blocage.</p>
+                <ul class="mt-6 space-y-3 text-slate-600">
+                    <li>Architecture modulaire pour monter en charge.</li>
+                    <li>Support des connexions multiples via Tokio.</li>
+                    <li>Cache en mémoire optimisé pour le throughput.</li>
+                </ul>
+            </article>
+        </section>
+        <section class="grid gap-6 lg:grid-cols-2">
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in" style="animation-delay:0.1s;">
+                <h2 class="text-3xl font-semibold mb-4">TTL & Expiration</h2>
+                <p class="text-slate-600 leading-7">La gestion de l’expiration garantit que les données restent pertinentes et évite les valeurs obsolètes.</p>
+                <ul class="mt-6 space-y-3 text-slate-600">
+                    <li>Expiration définie par clé via `EX`.</li>
+                    <li>Reaper background nettoie automatiquement.</li>
+                    <li>Prévention de l’accumulation de mémoire inutile.</li>
+                </ul>
+            </article>
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in" style="animation-delay:0.15s;">
+                <h2 class="text-3xl font-semibold mb-4">Persistance</h2>
+                <p class="text-slate-600 leading-7">MicroCache peut enregistrer l’état du store sur disque et restaurer le cache au redémarrage.</p>
+                <ul class="mt-6 space-y-3 text-slate-600">
+                    <li>Snapshots binaires du store.</li>
+                    <li>Restauration rapide après redémarrage.</li>
+                    <li>Durabilité sans compromettre la vitesse.</li>
+                </ul>
+            </article>
+        </section>
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Métriques & observabilité</h2>
+            <p class="text-slate-600 leading-7">Le projet intègre des métriques de latence, de hit rate et de débit avec diffusion en temps réel vers le dashboard.</p>
+            <div class="grid gap-6 md:grid-cols-3 mt-6">
+                <div class="rounded-3xl border border-slate-200 p-6">
+                    <h3 class="font-semibold mb-2">Hit Rate</h3>
+                    <p class="text-slate-600">Suivi du taux de succès du cache sur les requêtes.</p>
+                </div>
+                <div class="rounded-3xl border border-slate-200 p-6">
+                    <h3 class="font-semibold mb-2">Latence</h3>
+                    <p class="text-slate-600">Mesure continue de la latence moyenne des requêtes.</p>
+                </div>
+                <div class="rounded-3xl border border-slate-200 p-6">
+                    <h3 class="font-semibold mb-2">Débit</h3>
+                    <p class="text-slate-600">Requêtes par seconde et comparaison cache / sans cache.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

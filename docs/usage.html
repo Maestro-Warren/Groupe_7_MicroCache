@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Utilisation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: #f8fafc; color: #0f172a; scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #0ea5e9 0%, #7c3aed 100%); }
+        .card-shadow { box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
+        .fade-in { animation: fadeIn 0.9s ease both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-semibold text-slate-900">MicroCache</a>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                <a href="overview.html">Vue d'ensemble</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="features.html">Fonctionnalités</a>
+                <a href="setup.html">Installation</a>
+                <a href="usage.html" class="font-medium text-blue-600">Utilisation</a>
+                <a href="api.html">API</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="testing.html">Tests</a>
+            </div>
+        </div>
+    </nav>
+    <header class="hero-bg py-20 text-white">
+        <div class="container mx-auto px-6 text-center fade-in">
+            <p class="text-sm uppercase tracking-[0.45em] text-cyan-200">Comment utiliser</p>
+            <h1 class="mt-6 text-5xl font-bold">Utilisation de MicroCache</h1>
+            <p class="mt-6 text-lg leading-8 text-cyan-100 max-w-3xl mx-auto">Explications détaillées sur le protocole, la connexion TCP, les commandes et les scénarios d’usage typiques.</p>
+        </div>
+    </header>
+    <main class="container mx-auto px-6 py-12 space-y-12">
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Protocole MicroCache</h2>
+            <p class="text-slate-600 leading-7">MicroCache utilise un protocole texte simple basé sur des lignes terminées par `\n`. Chaque commande est traitée séquentiellement et renvoie une réponse textuelle.</p>
+            <div class="mt-6 rounded-3xl bg-slate-100 p-5">
+                <pre class="text-sm text-slate-800"><code>PING                    → PONG
+SET key value           → OK
+SET key value EX 30     → OK
+GET key                 → value ou NIL
+EXISTS key              → 1 ou 0
+DEL key                 → OK</code></pre>
+            </div>
+        </section>
+        <section class="grid gap-6 lg:grid-cols-2">
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in">
+                <h2 class="text-3xl font-semibold mb-4">Exemple de client TCP</h2>
+                <p class="text-slate-600 leading-7">Voici un exemple en Node.js qui illustre la connexion au serveur MicroCache et l’envoi de commandes.</p>
+                <pre class="mt-4 rounded-3xl bg-slate-100 p-5 text-sm text-slate-800 overflow-x-auto"><code>const net = require('net');
+
+const client = net.createConnection({ port: 6379 }, () => {
+  client.write('SET concert:1:tickets 150\n');
+  client.write('GET concert:1:tickets\n');
+});
+
+client.on('data', (data) => {
+  console.log(data.toString());
+});
+</code></pre>
+            </article>
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in" style="animation-delay:0.05s;">
+                <h2 class="text-3xl font-semibold mb-4">Scénarios d'usage</h2>
+                <ul class="space-y-3 text-slate-600 leading-7">
+                    <li><strong>Requêtes de lecture</strong> : prioriser le cache pour obtenir une réponse rapide.</li>
+                    <li><strong>Mise à jour de données</strong> : invalider ou mettre à jour le cache après modification.</li>
+                    <li><strong>Monitoring</strong> : évaluer le hit rate et la latence pour optimiser le cache.</li>
+                </ul>
+            </article>
+        </section>
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Modes de lecture</h2>
+            <p class="text-slate-600 leading-7">Le projet compare deux chemins :</p>
+            <ul class="list-disc list-inside mt-4 space-y-3 text-slate-600">
+                <li><strong>Avec cache</strong> : l’API interroge MicroCache, reçoit la valeur si elle est présente.</li>
+                <li><strong>Sans cache</strong> : l’API lit directement depuis SQLite pour comparaison de performance.</li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

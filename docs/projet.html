@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Détails du Projet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: #f8fafc; color: #0f172a; scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #38bdf8 0%, #7c3aed 100%); }
+        .card-shadow { box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
+        .fade-in { animation: fadeIn 0.9s ease both; }
+        .slide-left { animation: slideLeft 0.85s ease both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideLeft { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+</head>
+<body>
+    <header class="hero-bg text-white py-14">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div class="max-w-2xl fade-in">
+                    <p class="text-sm uppercase tracking-[0.4em] text-cyan-100">Documentation Projet</p>
+                    <h1 class="mt-4 text-5xl font-bold tracking-tight">Détails complets de MicroCache</h1>
+                    <p class="mt-4 text-lg text-cyan-100/90">Description approfondie des composants, du protocole, de la persistance et des scénarios de tests.</p>
+                </div>
+                <div class="space-x-3">
+                    <a href="index.html" class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-slate-900/10 transition hover:bg-slate-100">Accueil</a>
+                    <a href="team.html" class="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">Équipe</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 lg:px-12 py-12 space-y-12">
+        <section class="grid gap-8 lg:grid-cols-2">
+            <div class="rounded-3xl bg-white p-8 card-shadow fade-in">
+                <h2 class="text-3xl font-semibold text-slate-900 mb-4">Objectif du projet</h2>
+                <p class="text-slate-600 leading-8">MicroCache est conçu pour démontrer l’efficacité d’un cache distribué dans un système de billetterie. Il met en évidence la différence de performance entre des requêtes directes sur la base de données et des requêtes servies par un cache en mémoire.</p>
+                <p class="text-slate-600 leading-8 mt-4">Ce projet combine :</p>
+                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                    <li>Un serveur TCP performant en Rust</li>
+                    <li>Une API Express en Node.js</li>
+                    <li>Un dashboard animé en temps réel</li>
+                    <li>Un protocole texte simple pour le cache</li>
+                    <li>Un benchmark de charge mesurant les gains</li>
+                </ul>
+            </div>
+            <div class="rounded-3xl bg-slate-950 p-8 text-white card-shadow slide-left">
+                <h2 class="text-3xl font-semibold mb-4">Principaux bénéfices</h2>
+                <div class="space-y-4 text-slate-200">
+                    <div>
+                        <h3 class="font-semibold text-lg">Latence réduite</h3>
+                        <p>La latence moyenne chute de 87ms à 4ms lorsque le cache sert les requêtes.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg">Évolutivité</h3>
+                        <p>Le modèle async Tokio et le store thread-safe permettent une montée en charge naturelle.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg">Visibilité</h3>
+                        <p>Le dashboard fournit des données de hit rate, de requêtes/sec et de latence en direct.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg">Durabilité</h3>
+                        <p>La persistence via snapshot binaire assure une restauration rapide du cache.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h2 class="text-3xl font-semibold text-slate-900">Architecture technique</h2>
+                    <p class="mt-2 text-slate-600">Schéma des composants et du flux de données entre API, cache et base de données.</p>
+                </div>
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700">Node.js · Rust · SQLite · WebSocket</span>
+            </div>
+            <div class="mt-10 rounded-3xl border border-slate-200 p-6 bg-slate-50">
+                <div class="mermaid">
+                    graph LR
+                        A[Dashboard] -->|WebSocket| B[API Backend]
+                        B -->|Cache-aside| C[MicroCache TCP]
+                        B -->|Direct DB| D[SQLite]
+                        C --> E[Rust MicroCache]
+                        E --> F[Store Thread-safe]
+                        E --> G[Reaper TTL]
+                        E --> H[Persistence Snapshot]
+                </div>
+            </div>
+        </section>
+
+        <section class="grid gap-8 lg:grid-cols-3">
+            <article class="rounded-3xl bg-slate-900 p-8 text-white card-shadow fade-in">
+                <h3 class="text-2xl font-semibold mb-4">Module Rust</h3>
+                <ul class="space-y-3 text-slate-300">
+                    <li><strong>server.rs</strong> : serveur TCP avec Tokio.</li>
+                    <li><strong>store.rs</strong> : cache thread-safe + TTL.</li>
+                    <li><strong>parser.rs</strong> : analyse du protocole texte.</li>
+                    <li><strong>reaper.rs</strong> : nettoyage des clés expirées.</li>
+                    <li><strong>persistence.rs</strong> : snapshot binaire du store.</li>
+                </ul>
+            </article>
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in" style="animation-delay:0.1s;">
+                <h3 class="text-2xl font-semibold text-slate-900 mb-4">API Node.js</h3>
+                <ul class="space-y-3 text-slate-600">
+                    <li><strong>index.js</strong> : serveur Express et WebSocket.</li>
+                    <li><strong>cacheClient.js</strong> : client TCP vers MicroCache.</li>
+                    <li><strong>db.js</strong> : accès SQLite et données de concert.</li>
+                    <li><strong>stats.js</strong> : collecte des métriques.</li>
+                    <li><strong>routes/tickets.js</strong> : endpoints de billetterie.</li>
+                </ul>
+            </article>
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in" style="animation-delay:0.2s;">
+                <h3 class="text-2xl font-semibold text-slate-900 mb-4">Dashboard & Tests</h3>
+                <ul class="space-y-3 text-slate-600">
+                    <li>Interface Dashboard avec graphiques et statut WebSocket.</li>
+                    <li>Script de charge `loadtest.js` pour comparer performance cache/non-cache.</li>
+                    <li>Visualisation de latence, hit rate, req/sec, et journal des requêtes.</li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="rounded-3xl bg-slate-50 p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold text-slate-900 mb-5">Protocole MicroCache</h2>
+            <div class="grid gap-6 md:grid-cols-2">
+                <div class="rounded-3xl bg-white p-6 border border-slate-200">
+                    <h3 class="text-xl font-semibold text-slate-900 mb-3">Commandes prises en charge</h3>
+                    <pre class="rounded-lg bg-slate-100 p-4 text-sm text-slate-700 overflow-x-auto"><code>PING → PONG
+SET key value → OK
+SET key value EX 30 → OK
+GET key → value ou NIL
+EXISTS key → 1 ou 0
+DEL key → OK</code></pre>
+                </div>
+                <div class="rounded-3xl bg-white p-6 border border-slate-200">
+                    <h3 class="text-xl font-semibold text-slate-900 mb-3">Comportement</h3>
+                    <p class="text-slate-600 leading-7">Le protocole reste simple et lisible. Les requêtes sont terminées par un saut de ligne et chaque réponse est envoyée en texte clair. Cela facilite l’intégration avec des clients TCP légers et des tests manuels.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold text-slate-900 mb-5">Lancement du projet</h2>
+            <div class="grid gap-6 md:grid-cols-2">
+                <div class="rounded-3xl bg-slate-50 p-6 border border-slate-200">
+                    <h3 class="text-xl font-semibold text-slate-900 mb-3">Démarrage Rust</h3>
+                    <p class="text-slate-600 mb-4">Compiler et lancer le serveur MicroCache :</p>
+                    <pre class="rounded-lg bg-slate-100 p-4 text-sm text-slate-700 overflow-x-auto"><code>cd Groupe_7_MicroCache
+cargo run</code></pre>
+                </div>
+                <div class="rounded-3xl bg-slate-50 p-6 border border-slate-200">
+                    <h3 class="text-xl font-semibold text-slate-900 mb-3">Démarrage API</h3>
+                    <p class="text-slate-600 mb-4">Installer et lancer l’API demo :</p>
+                    <pre class="rounded-lg bg-slate-100 p-4 text-sm text-slate-700 overflow-x-auto"><code>cd microcache-demo/api-server
+npm install
+npm start</code></pre>
+                </div>
+            </div>
+            <div class="mt-8 rounded-3xl bg-slate-900 p-6 text-white border border-slate-800">
+                <h3 class="text-xl font-semibold mb-3">Test de charge</h3>
+                <p class="text-slate-200 mb-4">Comparer le comportement via le script de test :</p>
+                <pre class="rounded-lg bg-slate-950 p-4 text-sm text-slate-200 overflow-x-auto"><code>node src/loadtest.js
+node src/loadtest.js --requests 500 --concurrency 50 --concertId 4 --duration 30</code></pre>
+            </div>
+        </section>
+    </main>
+
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+</body>
+</html>

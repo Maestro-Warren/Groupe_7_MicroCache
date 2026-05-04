@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroCache - Documentation Complète</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/heroicons@2.0.18/24/outline/index.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body { scroll-behavior: smooth; }
+        .hero-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .fade-up {
+            animation: fadeUp 0.9s ease both;
+        }
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.35); }
+            50% { box-shadow: 0 0 0 22px rgba(102, 126, 234, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex flex-wrap justify-center gap-4 md:gap-8">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Accueil</a>
+                <a href="team.html" class="text-gray-700 hover:text-blue-600 font-medium">Équipe</a>
+                <a href="projet.html" class="text-gray-700 hover:text-blue-600 font-medium">Détails</a>
+                <a href="overview.html" class="text-gray-700 hover:text-blue-600 font-medium">Vue d'ensemble</a>
+                <a href="architecture.html" class="text-gray-700 hover:text-blue-600 font-medium">Architecture</a>
+                <a href="features.html" class="text-gray-700 hover:text-blue-600 font-medium">Fonctionnalités</a>
+                <a href="setup.html" class="text-gray-700 hover:text-blue-600 font-medium">Installation</a>
+                <a href="usage.html" class="text-gray-700 hover:text-blue-600 font-medium">Utilisation</a>
+                <a href="api.html" class="text-gray-700 hover:text-blue-600 font-medium">API</a>
+                <a href="dashboard.html" class="text-gray-700 hover:text-blue-600 font-medium">Dashboard</a>
+                <a href="testing.html" class="text-gray-700 hover:text-blue-600 font-medium">Tests</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="hero-bg text-white">
+        <div class="container mx-auto px-6 py-16">
+            <div class="flex flex-col items-center justify-center gap-8">
+                <div class="text-center fade-up">
+                    <svg class="w-16 h-16 mx-auto mb-4 pulse-glow" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <h1 class="text-5xl font-bold">MicroCache</h1>
+                    <p class="mt-6 text-xl max-w-3xl mx-auto">
+                        Cache haute performance pour billetterie concert - démonstration d'un système de cache distribué validant le gain de performance dans un scénario de charge élevée.
+                    </p>
+                </div>
+                <div class="flex flex-col items-center gap-3 sm:flex-row">
+                    <a href="team.html" class="inline-flex items-center justify-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-slate-900/10 transition hover:bg-slate-100">Voir l'équipe</a>
+                    <a href="projet.html" class="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/10 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/20">Détails du projet</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Vue d'ensemble</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    MicroCache est une démonstration complète d'un système de cache distribué conçu pour améliorer les performances dans des scénarios de charge élevée, comme la vente de tickets de concert.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-shadow bg-white p-8 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-semibold">Serveur MicroCache</h3>
+                    </div>
+                    <p class="text-gray-600">
+                        Cache clé/valeur en mémoire TCP thread-safe écrit en Rust avec Tokio pour des performances optimales.
+                    </p>
+                </div>
+                <div class="card-shadow bg-white p-8 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-semibold">API Backend</h3>
+                    </div>
+                    <p class="text-gray-600">
+                        API REST Node.js avec Express implémentant le pattern cache-aside pour la billetterie concert.
+                    </p>
+                </div>
+                <div class="card-shadow bg-white p-8 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-semibold">Dashboard Temps Réel</h3>
+                    </div>
+                    <p class="text-gray-600">
+                        Interface web avec visualisation en temps réel des métriques via WebSocket et Chart.js.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Callout -->
+    <section class="py-12 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white">
+        <div class="container mx-auto px-6">
+            <div class="grid gap-8 lg:grid-cols-3 items-center">
+                <div class="lg:col-span-2">
+                    <h2 class="text-3xl font-bold mb-4">Plus de détails sur le projet</h2>
+                    <p class="text-lg text-slate-200 leading-8">MicroCache combine une architecture Rust/Node.js avec un dashboard en temps réel pour illustrer les bénéfices concrets du cache distribué. Le système couvre le cycle complet : requête API, consultation du cache, fallback sur la base de données, et rebond vers le dashboard.</p>
+                </div>
+                <div class="space-y-4">
+                    <a href="team.html" class="block rounded-full bg-white px-6 py-3 text-center text-sm font-semibold text-slate-950 transition hover:bg-slate-100">Voir l'équipe complète</a>
+                    <a href="projet.html" class="block rounded-full border border-white/25 bg-white/10 px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/20">Voir la documentation projet</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Architecture</h2>
+                <p class="text-xl text-gray-600">Architecture modulaire et scalable du système MicroCache</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg card-shadow">
+                <div class="mermaid">
+                    graph TD
+                        A[Dashboard<br/>Port 3000] --> B[API Backend<br/>Node.js Express]
+                        B --> C[SQLite DB]
+                        B --> D[MicroCache TCP<br/>Port 6379]
+                        D --> E[Rust Tokio Server]
+                        E --> F[Store Thread-safe]
+                        E --> G[Reaper Background GC]
+                        E --> H[Persistence Snapshots]
+                </div>
+            </div>
+            <div class="mt-8 grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-blue-600">Backend Architecture</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><strong>Cache-Aside Pattern:</strong> L'API vérifie d'abord le cache avant la base de données</li>
+                        <li><strong>WebSocket Metrics:</strong> Diffusion temps réel des métriques toutes les 500ms</li>
+                        <li><strong>SQLite Database:</strong> Stockage persistant des données de concert</li>
+                        <li><strong>Metrics Collector:</strong> Collecte des statistiques avec fenêtres glissantes</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-green-600">Rust MicroCache</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><strong>Tokio Async:</strong> Serveur TCP asynchrone haute performance</li>
+                        <li><strong>Thread-Safe Store:</strong> Structure de données concurrente avec TTL</li>
+                        <li><strong>Background Reaper:</strong> Nettoyage automatique des entrées expirées</li>
+                        <li><strong>Binary Persistence:</strong> Snapshots sur disque pour la durabilité</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Fonctionnalités</h2>
+                <p class="text-xl text-gray-600">Capacités complètes du système MicroCache</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card-shadow bg-gray-50 p-6 rounded-lg">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Performance Élevée</h3>
+                    <p class="text-gray-600">Gain de vitesse ×22 avec cache, passant de 87ms à 4ms de latence moyenne</p>
+                </div>
+                <div class="card-shadow bg-gray-50 p-6 rounded-lg">
+                    <svg class="w-12 h-12 text-green-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Thread-Safe</h3>
+                    <p class="text-gray-600">Accès concurrent sécurisé au cache avec primitives de synchronisation Rust</p>
+                </div>
+                <div class="card-shadow bg-gray-50 p-6 rounded-lg">
+                    <svg class="w-12 h-12 text-purple-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">TTL Support</h3>
+                    <p class="text-gray-600">Expiration automatique des entrées avec garbage collector en arrière-plan</p>
+                </div>
+                <div class="card-shadow bg-gray-50 p-6 rounded-lg">
+                    <svg class="w-12 h-12 text-red-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Persistance</h3>
+                    <p class="text-gray-600">Snapshots binaires pour sauvegarder l'état du cache sur disque</p>
+                </div>
+                <div class="card-shadow bg-gray-50 p-6 rounded-lg">
+                    <svg class="w-12 h-12 text-yellow-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Métriques Temps Réel</h3>
+                    <p class="text-gray-600">Dashboard avec visualisation WebSocket des performances et hit rates</p>
+                </div>
+                <div class="card-shadow bg-gray-50 p-6 rounded-lg">
+                    <svg class="w-12 h-12 text-indigo-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Test de Charge</h3>
+                    <p class="text-gray-600">Outil intégré de benchmarking avec rapports de performance détaillés</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Setup Section -->
+    <section id="setup" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Installation & Configuration</h2>
+                <p class="text-xl text-gray-600">Guide complet pour démarrer avec MicroCache</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-lg card-shadow">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-600">Prérequis</h3>
+                    <ul class="space-y-3 text-gray-600">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            Rust 1.70+ (avec Cargo)
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            Node.js 18+ (avec npm)
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            SQLite (inclus avec Node.js experimental)
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-8 rounded-lg card-shadow">
+                    <h3 class="text-2xl font-semibold mb-6 text-green-600">Installation</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-semibold text-gray-700 mb-2">1. Cloner le projet</p>
+                            <code class="bg-gray-100 px-3 py-1 rounded text-sm">git clone https://github.com/Maestro-Warren/Groupe_7_MicroCache</code>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-700 mb-2">2. Installer les dépendances API</p>
+                            <code class="bg-gray-100 px-3 py-1 rounded text-sm">cd microcache-demo/api-server && npm install</code>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-700 mb-2">3. Compiler MicroCache</p>
+                            <code class="bg-gray-100 px-3 py-1 rounded text-sm">cd Groupe_7_MicroCache && cargo build --release</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 bg-white p-8 rounded-lg card-shadow">
+                <h3 class="text-2xl font-semibold mb-6 text-purple-600">Démarrage Rapide</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-blue-600">1</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">Lancer MicroCache</h4>
+                        <code class="bg-gray-100 px-2 py-1 rounded text-sm block">cargo run</code>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-green-600">2</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">Lancer l'API</h4>
+                        <code class="bg-gray-100 px-2 py-1 rounded text-sm block">npm start</code>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-purple-600">3</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">Ouvrir le Dashboard</h4>
+                        <code class="bg-gray-100 px-2 py-1 rounded text-sm block">http://localhost:3000</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Usage Section -->
+    <section id="usage" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Utilisation</h2>
+                <p class="text-xl text-gray-600">Comment utiliser MicroCache dans votre application</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">Protocole MicroCache</h3>
+                    <p class="text-gray-600 mb-4">Protocole textuel ligne-par-ligne (terminateur: \n)</p>
+                    <div class="space-y-2 font-mono text-sm bg-white p-4 rounded">
+                        <div><span class="text-green-600">PING</span> → PONG</div>
+                        <div><span class="text-blue-600">SET key value</span> → OK</div>
+                        <div><span class="text-blue-600">SET key value EX 30</span> → OK</div>
+                        <div><span class="text-purple-600">GET key</span> → value ou NIL</div>
+                        <div><span class="text-orange-600">EXISTS key</span> → 1 ou 0</div>
+                        <div><span class="text-red-600">DEL key</span> → OK</div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-green-600">Client TCP</h3>
+                    <p class="text-gray-600 mb-4">Connexion au serveur MicroCache sur le port 6379</p>
+                    <pre class="bg-white p-4 rounded text-sm overflow-x-auto"><code>// Exemple de connexion en Node.js
+const net = require('net');
+
+const client = net.createConnection({ port: 6379 }, () => {
+  client.write('SET concert:1:tickets 150\\n');
+  client.write('GET concert:1:tickets\\n');
+});
+
+client.on('data', (data) => {
+  console.log(data.toString());
+});</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Section -->
+    <section id="api" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">API REST</h2>
+                <p class="text-xl text-gray-600">Endpoints de l'API de billetterie concert</p>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mr-3">GET</span>
+                        <h3 class="text-xl font-semibold">/api/concerts</h3>
+                    </div>
+                    <p class="text-gray-600 mb-2">Récupère la liste de tous les concerts</p>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <strong>Réponse:</strong> Liste des concerts avec ID, nom, places disponibles
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium mr-3">GET</span>
+                        <h3 class="text-xl font-semibold">/api/tickets?concertId={id}</h3>
+                    </div>
+                    <p class="text-gray-600 mb-2">Récupère les places disponibles pour un concert (avec cache)</p>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <strong>Réponse:</strong> Nombre de places disponibles (cache-aside pattern)
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium mr-3">GET</span>
+                        <h3 class="text-xl font-semibold">/api/tickets/nocache?concertId={id}</h3>
+                    </div>
+                    <p class="text-gray-600 mb-2">Récupère les places disponibles sans cache (comparaison)</p>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <strong>Réponse:</strong> Nombre de places disponibles (directement depuis DB)
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium mr-3">GET</span>
+                        <h3 class="text-xl font-semibold">/api/stats</h3>
+                    </div>
+                    <p class="text-gray-600 mb-2">Récupère les métriques de performance</p>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <strong>Réponse:</strong> Requêtes totales, hit rate, latence moyenne, speedup factor
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Dashboard Temps Réel</h2>
+                <p class="text-xl text-gray-600">Interface de visualisation des performances</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card-shadow bg-gray-50 p-8 rounded-lg">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-600">Fonctionnalités du Dashboard</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Indicateur de connexion</strong>
+                                <p class="text-gray-600">État WebSocket en temps réel</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Métriques principales</strong>
+                                <p class="text-gray-600">Requêtes totales, hit rate, speedup factor, places disponibles</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Comparaison visuelle</strong>
+                                <p class="text-gray-600">2 panneaux côte à côte (sans cache vs avec MicroCache)</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Graphique temps réel</strong>
+                                <p class="text-gray-600">60 points de latence (Chart.js)</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-shadow bg-gray-50 p-8 rounded-lg">
+                    <h3 class="text-2xl font-semibold mb-6 text-green-600">Générateur de Trafic</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-white rounded">
+                            <span class="font-medium">Stop</span>
+                            <span class="text-gray-500">Arrêt du trafic</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded">
+                            <span class="font-medium">Normal</span>
+                            <span class="text-gray-500">5 req/s</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded">
+                            <span class="font-medium">Afflux</span>
+                            <span class="text-gray-500">30 req/s</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded">
+                            <span class="font-medium">Panique</span>
+                            <span class="text-gray-500">150 req/s</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="font-semibold mb-2">Sélecteur de Concert</h4>
+                        <p class="text-gray-600">Test sur 5 concerts différents pour valider les performances</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testing Section -->
+    <section id="testing" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Tests de Performance</h2>
+                <p class="text-xl text-gray-600">Validation des gains de performance avec MicroCache</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg card-shadow mb-8">
+                <h3 class="text-2xl font-semibold mb-6 text-blue-600">Rapport de Performance</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="border border-gray-300 px-4 py-2 text-left">Métrique</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Sans Cache</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Avec MicroCache</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Amélioration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2 font-medium">Latence moyenne</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">87 ms</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">4 ms</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center text-green-600 font-bold">×22 plus rapide</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-300 px-4 py-2 font-medium">Req/sec</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">12.3</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">89.7</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center text-green-600 font-bold">×7.3 plus rapide</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2 font-medium">Cache hit rate</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">—</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">92%</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-green-600">Script de Test de Charge</h3>
+                    <p class="text-gray-600 mb-4">Outil intégré pour benchmarker les performances</p>
+                    <div class="space-y-2 font-mono text-sm">
+                        <div><span class="text-blue-600"># Défaut : 100 req/route, 10 concurrentes</span></div>
+                        <div><span class="text-green-600">node src/loadtest.js</span></div>
+                        <br>
+                        <div><span class="text-blue-600"># Personnalisé</span></div>
+                        <div><span class="text-green-600">node src/loadtest.js --requests 500 --concurrency 50 --concertId 4 --duration 30</span></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg card-shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-purple-600">Options du Test</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><strong>--requests:</strong> Nombre total de requêtes (défaut: 100)</li>
+                        <li><strong>--concurrency:</strong> Nombre de requêtes simultanées (défaut: 10)</li>
+                        <li><strong>--concertId:</strong> ID du concert à tester (défaut: 1)</li>
+                        <li><strong>--duration:</strong> Durée du test en secondes (défaut: 10)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <h3 class="text-2xl font-bold">MicroCache</h3>
+            </div>
+            <p class="text-gray-400 mb-6 max-w-2xl mx-auto">
+                Cache haute performance pour billetterie concert - Démonstration complète d'un système de cache distribué.
+            </p>
+            <div class="flex justify-center space-x-6">
+                <a href="https://github.com/Maestro-Warren/Groupe_7_MicroCache" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+            <p class="text-gray-500 text-sm mt-6">
+                © 2026 MicroCache - Projet de démonstration système de cache distribué
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

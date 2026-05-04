@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Installation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: #f8fafc; color: #0f172a; scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); }
+        .card-shadow { box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
+        .fade-in { animation: fadeIn 0.9s ease both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-semibold text-slate-900">MicroCache</a>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                <a href="overview.html">Vue d'ensemble</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="features.html">Fonctionnalités</a>
+                <a href="setup.html" class="font-medium text-blue-600">Installation</a>
+                <a href="usage.html">Utilisation</a>
+                <a href="api.html">API</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="testing.html">Tests</a>
+            </div>
+        </div>
+    </nav>
+    <header class="hero-bg py-20 text-white">
+        <div class="container mx-auto px-6 text-center fade-in">
+            <p class="text-sm uppercase tracking-[0.45em] text-cyan-200">Installation complète</p>
+            <h1 class="mt-6 text-5xl font-bold">Guide d'installation et de configuration</h1>
+            <p class="mt-6 text-lg leading-8 text-cyan-100 max-w-3xl mx-auto">Toutes les étapes nécessaires pour lancer MicroCache localement, installer les dépendances et configurer les composants Rust et Node.js.</p>
+        </div>
+    </header>
+    <main class="container mx-auto px-6 py-12 space-y-12">
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Prérequis</h2>
+            <ul class="space-y-3 text-slate-600">
+                <li><strong>Rust 1.70+</strong> avec Cargo.</li>
+                <li><strong>Node.js 18+</strong> et npm.</li>
+                <li><strong>SQLite</strong> accessible via Node.js experimental SQLite.</li>
+                <li><strong>Internet</strong> pour charger Tailwind et Mermaid dans la doc.</li>
+            </ul>
+        </section>
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Installation pas à pas</h2>
+            <div class="space-y-6 text-slate-600">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">1. Cloner le dépôt</h3>
+                    <pre class="rounded-3xl bg-slate-100 p-4 text-sm text-slate-800">git clone https://github.com/Maestro-Warren/Groupe_7_MicroCache</pre>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">2. Installer les dépendances Node.js</h3>
+                    <pre class="rounded-3xl bg-slate-100 p-4 text-sm text-slate-800">cd microcache-demo/api-server
+npm install</pre>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">3. Compiler le serveur Rust</h3>
+                    <pre class="rounded-3xl bg-slate-100 p-4 text-sm text-slate-800">cd ../..
+cargo build --release</pre>
+                </div>
+            </div>
+        </section>
+        <section class="grid gap-6 lg:grid-cols-2">
+            <article class="rounded-3xl bg-slate-950 p-8 text-white card-shadow fade-in">
+                <h2 class="text-3xl font-semibold mb-4">Configuration recommandée</h2>
+                <p class="text-slate-300 leading-7">Utilisez une configuration de port standard pour éviter les conflits : MicroCache sur 6379 et API sur 3000. Assurez-vous que les deux services peuvent communiquer localement.</p>
+                <ul class="mt-6 space-y-3 text-slate-300">
+                    <li>MicroCache écoute sur <strong>127.0.0.1:6379</strong>.</li>
+                    <li>API backend sur <strong>http://localhost:3000</strong>.</li>
+                    <li>Dashboard accessible sur <strong>http://localhost:3000</strong>.</li>
+                </ul>
+            </article>
+            <article class="rounded-3xl bg-white p-8 card-shadow fade-in" style="animation-delay:0.05s;">
+                <h2 class="text-3xl font-semibold mb-4">Démarrage rapide</h2>
+                <div class="space-y-4 text-slate-600">
+                    <div>
+                        <p class="font-semibold">Lancer MicroCache :</p>
+                        <pre class="rounded-3xl bg-slate-100 p-4 text-sm text-slate-800">cargo run</pre>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Lancer l’API :</p>
+                        <pre class="rounded-3xl bg-slate-100 p-4 text-sm text-slate-800">cd microcache-demo/api-server
+npm start</pre>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Ouvrir le dashboard :</p>
+                        <pre class="rounded-3xl bg-slate-100 p-4 text-sm text-slate-800">http://localhost:3000</pre>
+                    </div>
+                </div>
+            </article>
+        </section>
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Conseils de déploiement</h2>
+            <p class="text-slate-600 leading-7">Pour un déploiement réel, séparez le backend de l’API et le serveur MicroCache sur différents conteneurs ou VM. Utilisez un load balancer pour répartir les requêtes API et surveillez l’utilisation mémoire du cache.</p>
+        </section>
+    </main>
+</body>
+</html>

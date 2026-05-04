@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroCache - Tests</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; background: #f8fafc; color: #0f172a; scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #0ea5e9 0%, #7c3aed 100%); }
+        .card-shadow { box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
+        .fade-in { animation: fadeIn 0.9s ease both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-semibold text-slate-900">MicroCache</a>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                <a href="overview.html">Vue d'ensemble</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="features.html">Fonctionnalités</a>
+                <a href="setup.html">Installation</a>
+                <a href="usage.html">Utilisation</a>
+                <a href="api.html">API</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="testing.html" class="font-medium text-blue-600">Tests</a>
+            </div>
+        </div>
+    </nav>
+    <header class="hero-bg py-20 text-white">
+        <div class="container mx-auto px-6 text-center fade-in">
+            <p class="text-sm uppercase tracking-[0.45em] text-cyan-200">Tests de performance</p>
+            <h1 class="mt-6 text-5xl font-bold">Validation et benchmarks</h1>
+            <p class="mt-6 text-lg leading-8 text-cyan-100 max-w-3xl mx-auto">Guide des tests de charge et interprétation des résultats pour mesurer les gains de performance apportés par MicroCache.</p>
+        </div>
+    </header>
+    <main class="container mx-auto px-6 py-12 space-y-12">
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Script de test de charge</h2>
+            <p class="text-slate-600 leading-7">Le script `loadtest.js` simule des requêtes concurrentes afin de comparer la performance en mode cache et sans cache.</p>
+            <div class="mt-6 rounded-3xl bg-slate-100 p-5 text-slate-800">
+                <pre class="text-sm"><code>node src/loadtest.js
+node src/loadtest.js --requests 500 --concurrency 50 --concertId 4 --duration 30</code></pre>
+            </div>
+        </section>
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Options du test</h2>
+            <ul class="space-y-3 text-slate-600 leading-7 list-disc list-inside">
+                <li><strong>--requests</strong> : nombre total de requêtes générées.</li>
+                <li><strong>--concurrency</strong> : niveau de requêtes simultanées.</li>
+                <li><strong>--concertId</strong> : identifiant du concert ciblé.</li>
+                <li><strong>--duration</strong> : durée totale du test en secondes.</li>
+            </ul>
+        </section>
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Rapports attendus</h2>
+            <div class="overflow-x-auto rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                <table class="min-w-full text-left text-sm text-slate-700">
+                    <thead>
+                        <tr>
+                            <th class="pb-3 font-semibold">Métrique</th>
+                            <th class="pb-3 font-semibold">Sans cache</th>
+                            <th class="pb-3 font-semibold">Avec cache</th>
+                            <th class="pb-3 font-semibold">Amélioration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t border-slate-200">
+                            <td class="py-3">Latence moyenne</td>
+                            <td>87 ms</td>
+                            <td>4 ms</td>
+                            <td class="text-emerald-600 font-semibold">×22 plus rapide</td>
+                        </tr>
+                        <tr class="border-t border-slate-200 bg-slate-100">
+                            <td class="py-3">Req/sec</td>
+                            <td>12.3</td>
+                            <td>89.7</td>
+                            <td class="text-emerald-600 font-semibold">×7.3 plus rapide</td>
+                        </tr>
+                        <tr class="border-t border-slate-200">
+                            <td class="py-3">Hit rate</td>
+                            <td>--</td>
+                            <td>92%</td>
+                            <td>Mesure du cache</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="rounded-3xl bg-white p-8 card-shadow fade-in">
+            <h2 class="text-3xl font-semibold mb-4">Analyse des résultats</h2>
+            <ul class="space-y-4 text-slate-600 leading-7 list-disc list-inside">
+                <li><strong>Rappel :</strong> la latence est le principal bénéfice du cache pour les lectures répétées.</li>
+                <li><strong>Hit rate élevé :</strong> montre que les requêtes sont souvent servies par le cache.</li>
+                <li><strong>Faible latence :</strong> améliore l’expérience utilisateur sous forte charge.</li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>
