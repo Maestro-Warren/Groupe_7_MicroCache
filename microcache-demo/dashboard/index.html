@@ -328,11 +328,11 @@
     .chart-legend { display: flex; gap: 16px; align-items: center; }
     .legend-item  { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #374151; }
     .legend-dot   { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .legend-dot.red   { background: #ef4444; }
-    .legend-dot.green { background: #10b981; }
+    .legend-dot.red   { background: #ff3333; }
+    .legend-dot.green { background: #00d97e; }
 
     .chart-body      { display: flex; gap: 32px; align-items: center; }
-    .chart-container { flex: 1; position: relative; height: 220px; }
+    .chart-container { flex: 1; position: relative; height: 320px; background: #f8f9fa; border-radius: 8px; padding: 12px; }
 
     .gauge-container {
       width: 140px; flex-shrink: 0; display: flex;
@@ -931,36 +931,36 @@
     function initLineChart() {
       const ctx=document.getElementById('latencyChart').getContext('2d');
       const gradientRed = ctx.createLinearGradient(0, 0, 0, 400);
-      gradientRed.addColorStop(0, 'rgba(239,68,68,0.6)');
-      gradientRed.addColorStop(1, 'rgba(239,68,68,0)');
+      gradientRed.addColorStop(0, 'rgba(255,51,51,0.75)');
+      gradientRed.addColorStop(1, 'rgba(255,51,51,0.15)');
       const gradientGreen = ctx.createLinearGradient(0, 0, 0, 400);
-      gradientGreen.addColorStop(0, 'rgba(16,185,129,0.6)');
-      gradientGreen.addColorStop(1, 'rgba(16,185,129,0)');
+      gradientGreen.addColorStop(0, 'rgba(0,217,126,0.75)');
+      gradientGreen.addColorStop(1, 'rgba(0,217,126,0.15)');
       lineChart=new Chart(ctx,{
         type:'line',
         data:{
           labels:Array(MAX_CHART_POINTS).fill(''),
           datasets:[
             { label:'Sans cache', data:Array(MAX_CHART_POINTS).fill(null),
-              borderColor:'#ef4444', backgroundColor:gradientRed,
-              fill:true, tension:0.4, pointRadius:0, borderWidth:2 },
+              borderColor:'#ff3333', backgroundColor:gradientRed,
+              fill:true, tension:0.4, pointRadius:0, borderWidth:3.5 },
             { label:'MicroCache', data:Array(MAX_CHART_POINTS).fill(null),
-              borderColor:'#10b981', backgroundColor:gradientGreen,
-              fill:true, tension:0.4, pointRadius:0, borderWidth:2 }
+              borderColor:'#00d97e', backgroundColor:gradientGreen,
+              fill:true, tension:0.4, pointRadius:0, borderWidth:3.5 }
           ]
         },
         options:{
           responsive:true, maintainAspectRatio:false, animation:false,
           interaction:{mode:'index',intersect:false},
           plugins:{
-            legend:{display:false},
-            tooltip:{ backgroundColor:'rgba(15,23,42,0.9)', padding:10, cornerRadius:8,
-              bodyFont:{size:12,weight:'600'} }
+            legend:{display:true,position:'top',align:'end',labels:{usePointStyle:true,padding:16,font:{size:13,weight:600},color:'#111827',boxPadding:8}},
+            tooltip:{ backgroundColor:'rgba(15,23,42,0.95)', padding:12, cornerRadius:10,
+              bodyFont:{size:13,weight:'600'}, titleFont:{size:13,weight:700}, displayColors:true, boxPadding:8 }
           },
           scales:{
-            y:{ beginAtZero:true, max:200,
-                ticks:{font:{size:11},color:'#9ca3af',callback:v=>v+' ms'},
-                grid:{color:'rgba(156,163,175,0.2)', lineWidth:1, drawTicks:false, drawBorder:false}, border:{display:false} },
+            y:{ beginAtZero:true, max:200, grace:'10%',
+                ticks:{font:{size:13,weight:600},color:'#374151',callback:v=>v+' ms',padding:8},
+                grid:{color:'rgba(156,163,175,0.25)', lineWidth:1.2, drawTicks:false, drawBorder:false}, border:{display:false} },
             x:{ display:false }
           }
         }
