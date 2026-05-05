@@ -145,6 +145,60 @@
     }
     .concert-control select:focus { border-color: #10b981; }
 
+    .doc-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .doc-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.4);
+    }
+
+    .doc-button:hover::before {
+      opacity: 1;
+    }
+
+    .doc-button:active {
+      transform: translateY(0);
+    }
+
+    .doc-button svg {
+      width: 18px;
+      height: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .doc-button span {
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.3px;
+    }
+
     /* ===== TICKET ===== */
     .ticket-illustration { flex-shrink: 0; width: 260px; }
 
@@ -556,12 +610,19 @@
             <span class="concert-label">Concert</span>
             <select id="concertSelect">
               <option value="1">Burna Boy - Bercy</option>
-              <option value="2">Davido &#8212; Accor Arena</option>
-              <option value="3">Tiwa Savage &#8212; Z&#233;nith</option>
-              <option value="4">WizKid &#8212; Stade de France</option>
-              <option value="5">Aya Nakamura &#8212; Accor Arena</option>
+              <option value="2">Davido — Accor Arena</option>
+              <option value="3">Tiwa Savage — Zénith</option>
+              <option value="4">WizKid — Stade de France</option>
+              <option value="5">Aya Nakamura — Accor Arena</option>
             </select>
           </div>
+          <a href="/docs/index.html" class="doc-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Documentation</span>
+          </a>
         </div>
       </div>
 

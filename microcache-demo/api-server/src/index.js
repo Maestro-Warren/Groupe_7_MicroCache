@@ -52,6 +52,10 @@ app.use('/api', createTicketsRouter(db, cache));
 // Sanity check
 app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
+// Servir la documentation statique
+const DOCS_PATH = path.resolve(__dirname, '../../../docs');
+app.use('/docs', express.static(DOCS_PATH));
+
 // Dashboard — servir le fichier HTML statique
 const DASHBOARD_PATH = path.resolve(__dirname, '../../dashboard/index.html');
 app.get('/', (req, res) => res.sendFile(DASHBOARD_PATH));
